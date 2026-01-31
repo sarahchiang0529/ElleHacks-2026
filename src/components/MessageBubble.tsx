@@ -1,9 +1,11 @@
+import * as React from "react";
 import { motion } from 'motion/react';
 import { ScenarioMessage } from '../types/game';
 
 interface MessageBubbleProps {
   message: ScenarioMessage;
   index: number;
+  key?: React.Key;
 }
 
 export function MessageBubble({ message, index }: MessageBubbleProps) {

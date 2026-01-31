@@ -1,3 +1,4 @@
+import * as React from "react";
 import { motion } from 'motion/react';
 import { Lock } from 'lucide-react';
 import { Badge } from '../types/game';
@@ -6,6 +7,7 @@ interface BadgeCardProps {
   badge: Badge;
   unlocked: boolean;
   animate?: boolean;
+  key?: React.Key;
 }
 
 export function BadgeCard({ badge, unlocked, animate = false }: BadgeCardProps) {
