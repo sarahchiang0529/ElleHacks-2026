@@ -9,6 +9,8 @@ interface Message {
   duration?: number;
 }
 
+type ResultState = "correct" | "wrong" | null;
+
 interface ConversationModalProps {
   isOpen: boolean;
   villagerName: string;
@@ -18,6 +20,8 @@ interface ConversationModalProps {
   onTrust: () => void;
   onQuestion: () => void;
   onReject: () => void;
+  result?: ResultState;
+
 }
 
 export function ConversationModal({
@@ -29,6 +33,7 @@ export function ConversationModal({
   onTrust,
   onQuestion,
   onReject,
+  result,
 }: ConversationModalProps) {
   const getMoodColor = () => {
     switch (villagerMood) {
@@ -40,6 +45,13 @@ export function ConversationModal({
         return '#a8b9e8';
     }
   };
+
+  const resultClass =
+    result === "correct"
+      ? "ring-4 ring-green-400 shadow-[0_0_40px_rgba(34,197,94,0.35)]"
+      : result === "wrong"
+      ? "ring-4 ring-red-400 shadow-[0_0_40px_rgba(239,68,68,0.35)]"
+      : "";
 
   return (
     <AnimatePresence>
@@ -61,7 +73,7 @@ export function ConversationModal({
             transition={{ type: 'spring', damping: 20 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-2xl"
           >
-            <div className="bg-white rounded-3xl shadow-2xl border-4 border-[#3a3a3a] p-8">
+            <div className={`bg-white rounded-3xl shadow-2xl border-4 border-[#3a3a3a] p-8 ${resultClass}`}>
               {/* Header with villager */}
               <div className="flex items-center gap-4 mb-6">
                 {/* Villager portrait */}
