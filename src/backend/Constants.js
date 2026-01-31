@@ -2,4 +2,3 @@ export const INTRO_PROMPT = "Give me a short introductory story that will be use
 
 export const NARRATOR_VOICE = 'JBFqnCBsd6RMkjVDRZzb';
 export const NPC1 = 'Xb7hH8MSUJpSbSDYk0k2';
-export const AGENT_ID = 'agent_1501kgas6xvcfab8fr21wv967c3s';
