@@ -66,22 +66,25 @@ export function CharacterSprite({
     
     switch (direction) {
       case 'up':
-        // Moving away - shadow stretches down
+        // Moving away - small shadow below
         return {
+          position: 'bottom',
           width: `${baseWidth * 0.7}px`,
           height: `${baseHeight * 1.2}px`,
           transform: 'translateX(-50%) translateY(2px)',
         };
       case 'down':
-        // Moving toward camera - shadow is wider
+        // Moving toward - small shadow above
         return {
-          width: `${baseWidth * 1.2}px`,
-          height: `${baseHeight}px`,
-          transform: 'translateX(-50%)',
+          position: 'top',
+          width: `${baseWidth * 0.7}px`,
+          height: `${baseHeight * 1.2}px`,
+          transform: 'translateX(-50%) translateY(-2px)',
         };
       case 'left':
         // Moving left - shadow offset right
         return {
+          position: 'bottom',
           width: `${baseWidth}px`,
           height: `${baseHeight}px`,
           transform: 'translateX(-40%) skewX(10deg)',
@@ -89,18 +92,23 @@ export function CharacterSprite({
       case 'right':
         // Moving right - shadow offset left
         return {
+          position: 'bottom',
           width: `${baseWidth}px`,
           height: `${baseHeight}px`,
           transform: 'translateX(-60%) skewX(-10deg)',
         };
       default:
         return {
+          position: 'bottom',
           width: `${baseWidth}px`,
           height: `${baseHeight}px`,
           transform: 'translateX(-50%)',
         };
     }
   };
+  
+  const shadowStyle = getShadowStyle();
+  const { position, ...shadowCSS } = shadowStyle;
   
   return (
     <div 
@@ -112,8 +120,11 @@ export function CharacterSprite({
     >
       {/* Shadow */}
       <div
-        className="absolute bottom-0 left-1/2 bg-black/20 rounded-full transition-all duration-150"
-        style={getShadowStyle()}
+        className="absolute left-1/2 bg-black/20 rounded-full transition-all duration-150"
+        style={{
+          [position as string]: 0,
+          ...shadowCSS
+        }}
       />
       
       {/* Sprite */}
