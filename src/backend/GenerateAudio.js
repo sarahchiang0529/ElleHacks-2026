@@ -6,18 +6,25 @@ const elevenlabs = new ElevenLabsClient({
   apiKey: process.env.ELEVENLABS_API_KEY,
 });
 
-async function saveAudio() {
-  console.log("Fetching audio from ElevenLabs...");
-
-  const response = await elevenlabs.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {
-    text: 'The first move is what sets everything in motion.',
-    modelId: 'eleven_multilingual_v2',
+export async function createAudio(audioText, voiceId) {
+  const response = await elevenlabs.textToSpeech.convert(voiceId, {
+    text: audioText,
+    modelId: 'eleven_turbo_v2_5',
     outputFormat: 'mp3_44100_128',
-    voice_id: 'G17SuINrv2H9FC6nvetn'
   });
+  
+  return await streamToBuffer(response);
+}
 
+export async function saveAudio(buffers, audioFileName) {
+  const audioBuffer = Buffer.concat(buffers);
+  writeFileSync(`${audioFileName}.mp3`, audioBuffer);
+  console.log("Success!");
+}
+
+export async function streamToBuffer(stream) {
+  const reader = stream.getReader();
   const chunks = [];
-  const reader = response.getReader();
 
   while (true) {
     const { done, value } = await reader.read();
@@ -25,12 +32,6 @@ async function saveAudio() {
     chunks.push(value);
   }
 
-  const audioBuffer = Buffer.concat(chunks);
-
-  const fileName = 'manual_audio.mp3';
-  writeFileSync(fileName, audioBuffer);
-
-  console.log(`Success!`);
+  // return chunks;
+  return Buffer.concat(chunks.map(chunk => Buffer.from(chunk)));
 }
-
-saveAudio().catch(console.error);
