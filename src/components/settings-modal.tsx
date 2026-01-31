@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Settings, X, Volume2, VolumeX } from "lucide-react";
 import { useState } from "react";
 

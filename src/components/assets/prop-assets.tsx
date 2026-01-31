@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 export function TreeAsset({ size = 'medium' }: { size?: 'small' | 'medium' | 'large' }) {
   const sizes = { small: 40, medium: 60, large: 80 };

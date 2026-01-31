@@ -1,12 +1,11 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 // Import building assets
-import bankImg from "figma:asset/2b3c7d57adc759ae4cb64cbcca8bfc40aac4e677.png";
-import storesImg from "figma:asset/4eb4f02a3a46b747e4d5ce47345101b93e8c4234.png";
-import phoneHouseImg from "figma:asset/440f66d913f316e0ec054d3befad693d7f08a67d.png";
-import friendHouseImg from "figma:asset/60bdc847c64bec30f2542a3b652bcf76b3239696.png";
-import schoolImg from "figma:asset/f5d2642a4d45375b84c14c5378c1ef8194c0f3e7.png";
-
+import bankImg from "@/assets/bank.png";
+import storeImg "@/assets/market.png";
+import phoneHouseImg from "@/assets/house.png";
+import friendHouseImg from "@/assets//house2.png";
+import schoolImg from "@/assets/school.png";
 interface BuildingProps {
   type: 'bank' | 'store' | 'phone' | 'friend' | 'school';
   isActive: boolean;

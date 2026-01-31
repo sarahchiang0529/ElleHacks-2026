@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { PlayerAvatar } from "./player-avatar";
 import { BuildingAsset } from "./building-asset";
 import { TrustMeter } from "./trust-meter";

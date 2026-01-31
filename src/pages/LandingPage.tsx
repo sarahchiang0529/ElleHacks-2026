@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion } from "framer-motion";
 import { Shield, Info } from 'lucide-react';
 import { ActionButton } from '../components/ActionButton';
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion } from "framer-motion";
 import { ArrowLeft } from 'lucide-react';
 import { ScenarioCard } from '../components/ScenarioCard';
 import { ProgressBar } from '../components/ProgressBar';

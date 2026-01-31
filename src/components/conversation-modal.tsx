@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { VoiceMessagePlayer } from "./voice-message-player";
 import { NPCSprite } from "./assets/npc-sprite";
 

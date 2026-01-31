@@ -1,8 +1,9 @@
-import dirtTile from "figma:asset/bba80209ade146a307fcb8c0bf17f6de599a8234.png";
-import dirtEdge from "figma:asset/cd69ca7d49374937559ac57f0d5aa4f82660f09a.png";
-import fenceVertical from "figma:asset/cda31866133efe49672105467d6866c75f817c8a.png";
-import fenceHorizontal from "figma:asset/7c6f9bf4827003f88246ebfdb8735c8b61691d5f.png";
-import fenceCorner from "figma:asset/8d44bb26c197d8b817aea62f91a7a796cacc1745.png";
+import dirtTile from "@/assets/dirt.png";
+import dirtEdge from "@/assets/dirtDeco.png";
+import fenceVertical from "@/assets/fence3.png";
+import fenceHorizontal from "@/assets/fence.png";
+import fenceCorner from "@/assets/fence2.png";
+
 
 interface PathTile {
   x: number;

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion } from "framer-motion";
 import { ArrowLeft, Trophy, Target, Award } from 'lucide-react';
 import { BadgeCard } from '../components/BadgeCard';
 import { ProgressBar } from '../components/ProgressBar';

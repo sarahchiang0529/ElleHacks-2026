@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion } from "framer-motion";
 import { ArrowLeft, Smartphone } from 'lucide-react';
 import { MessageBubble } from '../components/MessageBubble';
 import { ActionButton } from '../components/ActionButton';

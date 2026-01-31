@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import { useState, useEffect } from "react";
 
