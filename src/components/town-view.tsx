@@ -1,19 +1,23 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import { PlayerAvatar } from "./player-avatar";
 import { BuildingAsset } from "./building-asset";
 import { TrustMeter } from "./trust-meter";
 import { TreeDecoration } from "./tree-decoration";
-import { PathSystem, createHorizontalPath, createVerticalPath } from "./path-system";
+import {
+  PathSystem,
+  createHorizontalPath,
+  createVerticalPath,
+} from "./path-system";
 
 interface Building {
   id: number;
   name: string;
-  variant: 'lily' | 'max' | 'zoe';
+  variant: "lily" | "max" | "zoe";
   x: number;
   y: number;
   color: string;
   isActive: boolean;
-  buildingType: 'bank' | 'store' | 'phone' | 'friend' | 'school';
+  buildingType: "bank" | "store" | "phone" | "friend" | "school";
 }
 
 interface Tree {
@@ -29,12 +33,12 @@ interface TownViewProps {
   cameraX: number;
   cameraY: number;
   isMoving: boolean;
-  playerDirection: 'up' | 'down' | 'left' | 'right';
+  playerDirection: "up" | "down" | "left" | "right";
   villagers: Building[];
   nearbyVillager: number | null;
   trustLevel: number;
   onVillagerClick: (id: number) => void;
-  feedbackEffect: 'safe' | 'unsafe' | null;
+  feedbackEffect: "safe" | "unsafe" | null;
   decorations: Array<{ x: number; y: number; emoji: string }>;
   worldWidth: number;
   worldHeight: number;
@@ -57,37 +61,22 @@ export function TownView({
   worldHeight,
   trees,
 }: TownViewProps) {
-  // Create path network connecting buildings
-  // Bank (600, 400) -> Store (1800, 500) -> School (1200, 800) -> Lily's House (400, 1200) -> Max's House (1400, 1300)
+  // Path network (paths only)
   const pathTiles = [
-    // Main horizontal path from Bank to Store
     ...createHorizontalPath(600, 500, 38),
-    // Vertical path from Store down to School
     ...createVerticalPath(1200, 500, 10),
-    // Path from School to Lily's House
     ...createHorizontalPath(400, 800, 26),
     ...createVerticalPath(400, 800, 13),
-    // Path from Lily's House to Max's House
     ...createHorizontalPath(400, 1300, 32),
-    // Central vertical spine
     ...createVerticalPath(1200, 300, 35),
   ];
 
-  const fencePieces = [
-    // Fences around Bank area
-    { x: 550, y: 350, type: 'corner' as const },
-    { x: 750, y: 350, type: 'horizontal' as const },
-    // Fences around Store
-    { x: 1750, y: 450, type: 'vertical' as const },
-    { x: 1850, y: 450, type: 'vertical' as const },
-  ];
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#87CEEB]">
-      {/* Trust meter - fixed to screen */}
       <TrustMeter value={trustLevel} />
 
-      {/* Feedback effects - fixed to screen */}
-      {feedbackEffect === 'safe' && (
+      {/* Feedback effects */}
+      {feedbackEffect === "safe" && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 0.3, 0] }}
@@ -95,7 +84,8 @@ export function TownView({
           className="absolute inset-0 bg-green-400 pointer-events-none z-30"
         />
       )}
-      {feedbackEffect === 'unsafe' && (
+
+      {feedbackEffect === "unsafe" && (
         <>
           <motion.div
             initial={{ opacity: 0 }}
@@ -111,7 +101,7 @@ export function TownView({
         </>
       )}
 
-      {/* World container - this moves with the camera */}
+      {/* World container */}
       <div
         className="absolute"
         style={{
@@ -120,34 +110,36 @@ export function TownView({
           transform: `translate(${-cameraX}px, ${-cameraY}px)`,
         }}
       >
-        {/* Simple grass ground */}
-        <div className="absolute inset-0 bg-[#7EC850]"></div>
+        {/* Grass */}
+        <div className="absolute inset-0 bg-[#7EC850]" />
 
-        {/* Dirt path system */}
-        <PathSystem paths={pathTiles} fences={fencePieces} />
+        {/* Paths only (no fences) */}
+        <PathSystem paths={pathTiles} />
 
-        {/* Trees - background layer */}
-        {trees.filter(tree => tree.y < playerY).map((tree, index) => (
-          <div 
-            key={`tree-bg-${index}`} 
-            className="absolute" 
-            style={{ 
-              left: tree.x - 40, 
-              top: tree.y - 80,
-              zIndex: 1,
-            }}
-          >
-            <TreeDecoration variant={tree.variant} scale={tree.scale} />
-          </div>
-        ))}
+        {/* Trees behind player */}
+        {trees
+          .filter((tree) => tree.y < playerY)
+          .map((tree, index) => (
+            <div
+              key={`tree-bg-${index}`}
+              className="absolute"
+              style={{
+                left: tree.x - 40,
+                top: tree.y - 80,
+                zIndex: 1,
+              }}
+            >
+              <TreeDecoration variant={tree.variant} scale={tree.scale} />
+            </div>
+          ))}
 
         {/* Buildings */}
         {villagers.map((building) => (
-          <div 
-            key={building.id} 
-            className="absolute" 
-            style={{ 
-              left: building.x - 100, 
+          <div
+            key={building.id}
+            className="absolute"
+            style={{
+              left: building.x - 100,
               top: building.y - 120,
               zIndex: 5,
             }}
@@ -160,32 +152,42 @@ export function TownView({
           </div>
         ))}
 
-        {/* Player avatar - positioned in world coordinates */}
-        <div className="absolute" style={{ left: playerX - 30, top: playerY - 30, zIndex: 10 }}>
-          <PlayerAvatar x={30} y={30} isMoving={isMoving} direction={playerDirection} />
+        {/* Player */}
+        <div
+          className="absolute"
+          style={{ left: playerX - 30, top: playerY - 30, zIndex: 10 }}
+        >
+          <PlayerAvatar
+            x={30}
+            y={30}
+            isMoving={isMoving}
+            direction={playerDirection}
+          />
         </div>
 
-        {/* Trees - foreground layer (in front of player) */}
-        {trees.filter(tree => tree.y >= playerY).map((tree, index) => (
-          <div 
-            key={`tree-fg-${index}`} 
-            className="absolute" 
-            style={{ 
-              left: tree.x - 40, 
-              top: tree.y - 80,
-              zIndex: 20,
-            }}
-          >
-            <TreeDecoration variant={tree.variant} scale={tree.scale} />
-          </div>
-        ))}
+        {/* Trees in front of player */}
+        {trees
+          .filter((tree) => tree.y >= playerY)
+          .map((tree, index) => (
+            <div
+              key={`tree-fg-${index}`}
+              className="absolute"
+              style={{
+                left: tree.x - 40,
+                top: tree.y - 80,
+                zIndex: 20,
+              }}
+            >
+              <TreeDecoration variant={tree.variant} scale={tree.scale} />
+            </div>
+          ))}
       </div>
 
-      {/* Instructions - fixed to screen */}
+      {/* Instructions */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center z-40">
         <div className="bg-white/90 px-6 py-3 rounded-full border-3 border-[#3a3a3a] shadow-lg">
           <span className="text-sm">
-            Use <span className="font-bold">Arrow Keys</span> or <span className="font-bold">WASD</span> to explore • Press <span className="font-bold">E</span> to talk
+            Use <b>Arrow Keys</b> or <b>WASD</b> • Press <b>E</b> to talk
           </span>
         </div>
       </div>
@@ -196,9 +198,8 @@ export function TownView({
           <div className="text-xs mb-1 text-center font-bold">Map</div>
           <div
             className="relative bg-[#e8f4f8] rounded-lg border-2 border-[#3a3a3a]"
-            style={{ width: '120px', height: '120px' }}
+            style={{ width: "120px", height: "120px" }}
           >
-            {/* Player position on minimap */}
             <div
               className="absolute w-3 h-3 bg-red-500 rounded-full border-2 border-white"
               style={{
@@ -206,7 +207,6 @@ export function TownView({
                 top: `${(playerY / worldHeight) * 120 - 6}px`,
               }}
             />
-            {/* Building positions on minimap */}
             {villagers.map((v) => (
               <div
                 key={v.id}
