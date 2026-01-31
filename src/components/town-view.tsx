@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 import { PlayerAvatar } from "./player-avatar";
 import { BuildingAsset } from "./building-asset";
 import { TrustMeter } from "./trust-meter";
@@ -29,6 +29,7 @@ interface TownViewProps {
   cameraX: number;
   cameraY: number;
   isMoving: boolean;
+  playerDirection: 'up' | 'down' | 'left' | 'right';
   villagers: Building[];
   nearbyVillager: number | null;
   trustLevel: number;
@@ -46,6 +47,7 @@ export function TownView({
   cameraX,
   cameraY,
   isMoving,
+  playerDirection,
   villagers,
   nearbyVillager,
   trustLevel,
@@ -160,7 +162,7 @@ export function TownView({
 
         {/* Player avatar - positioned in world coordinates */}
         <div className="absolute" style={{ left: playerX - 30, top: playerY - 30, zIndex: 10 }}>
-          <PlayerAvatar x={30} y={30} isMoving={isMoving} />
+          <PlayerAvatar x={30} y={30} isMoving={isMoving} direction={playerDirection} />
         </div>
 
         {/* Trees - foreground layer (in front of player) */}

@@ -105,6 +105,7 @@ export default function App() {
   const [playerX, setPlayerX] = useState(WORLD_WIDTH / 2);
   const [playerY, setPlayerY] = useState(WORLD_HEIGHT / 2);
   const [isMoving, setIsMoving] = useState(false);
+  const [playerDirection, setPlayerDirection] = useState<'up' | 'down' | 'left' | 'right'>('down');
   const [keysPressed, setKeysPressed] = useState<Set<string>>(new Set());
 
   // Camera state - follows the player
@@ -234,6 +235,18 @@ export default function App() {
       if (keysPressed.size === 0) {
         setIsMoving(false);
         return;
+      }
+
+      // Determine direction based on keys pressed
+      // Priority: vertical first, then horizontal
+      if (keysPressed.has('arrowup') || keysPressed.has('w')) {
+        setPlayerDirection('up');
+      } else if (keysPressed.has('arrowdown') || keysPressed.has('s')) {
+        setPlayerDirection('down');
+      } else if (keysPressed.has('arrowleft') || keysPressed.has('a')) {
+        setPlayerDirection('left');
+      } else if (keysPressed.has('arrowright') || keysPressed.has('d')) {
+        setPlayerDirection('right');
       }
 
       setPlayerX((prevX) => {
@@ -368,6 +381,7 @@ export default function App() {
         cameraX={cameraX}
         cameraY={cameraY}
         isMoving={isMoving}
+        playerDirection={playerDirection}
         villagers={villagers}
         nearbyVillager={nearbyVillager}
         trustLevel={trustLevel}
