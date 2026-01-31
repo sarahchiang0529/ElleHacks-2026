@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import playerSprite from "@/assets/playerSprite.png";
 
-
 interface CharacterSpriteProps {
   isMoving: boolean;
   direction?: 'up' | 'down' | 'left' | 'right';
@@ -60,6 +59,49 @@ export function CharacterSprite({
   
   const displaySize = SPRITE_SIZE * SCALE;
   
+  // Dynamic shadow based on direction
+  const getShadowStyle = () => {
+    const baseWidth = displaySize * 0.5;
+    const baseHeight = displaySize * 0.2;
+    
+    switch (direction) {
+      case 'up':
+        // Moving away - shadow stretches down
+        return {
+          width: `${baseWidth * 0.7}px`,
+          height: `${baseHeight * 1.2}px`,
+          transform: 'translateX(-50%) translateY(2px)',
+        };
+      case 'down':
+        // Moving toward camera - shadow is wider
+        return {
+          width: `${baseWidth * 1.2}px`,
+          height: `${baseHeight}px`,
+          transform: 'translateX(-50%)',
+        };
+      case 'left':
+        // Moving left - shadow offset right
+        return {
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: 'translateX(-40%) skewX(10deg)',
+        };
+      case 'right':
+        // Moving right - shadow offset left
+        return {
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: 'translateX(-60%) skewX(-10deg)',
+        };
+      default:
+        return {
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: 'translateX(-50%)',
+        };
+    }
+  };
+  
   return (
     <div 
       className="relative" 
@@ -70,12 +112,8 @@ export function CharacterSprite({
     >
       {/* Shadow */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-black/20 rounded-full transition-transform"
-        style={{
-          width: `${displaySize * 0.5}px`,
-          height: `${displaySize * 0.2}px`,
-          transform: `translateX(-50%) scale(${isMoving ? 0.9 : 1})`,
-        }}
+        className="absolute bottom-0 left-1/2 bg-black/20 rounded-full transition-all duration-150"
+        style={getShadowStyle()}
       />
       
       {/* Sprite */}
