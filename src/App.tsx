@@ -4,6 +4,8 @@ import { ConversationModal } from "./components/conversation-modal";
 import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
+import { MAX, LILY, SALLY, BOB, ZOE } from "./backend/Constants";
+import { createAndSaveAudio } from "./backend/GenerateAudio";
 
 interface Scenario {
   id: number;
@@ -18,7 +20,8 @@ interface Scenario {
   mood: 'neutral' | 'worried' | 'happy';
   reflection: {
     title: string;
-    message: string;
+    correctMessage: string;
+    incorrectMessage: string;
   };
 }
 
@@ -33,13 +36,14 @@ const scenarios: Scenario[] = [
     villagerId: 1,
     message: {
       type: 'text',
-      content: "You saved $50 for an $80 skateboard. Your favorite game is on sale for $30. What do you do?",
+      content: "You have $80 in your pocket. Your favorite game going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
     },
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
       title: "Delayed Gratification",
-      message: "Great job! Staying focused on your goal will help you get the skateboard faster. Delayed gratification pays off!",
+      correctMessage: "Great job! Saving your money in a bank will give you interest which gives you more money! This will help you get the skateboard faster. Delayed gratification pays off!",
+      incorrectMessage: "Hmmmm. You bought yourself a new game, but you missed out on an excellent saving deal at the bank."
     },
   },
   {
@@ -47,13 +51,14 @@ const scenarios: Scenario[] = [
     villagerId: 2,
     message: {
       type: 'text',
-      content: "Your backpack broke. Basic backpack: $20. Cool limited edition: $50. Your friend's birthday is next month (need $30 for gift). What do you buy?",
+      content: "There's a cool new backpack on sale for only $30! But you really need to save money to buy your friend's birthday gift. Do you buy the backpack?",
     },
     correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
       title: "Needs vs Wants",
-      message: "Smart choice! The basic backpack meets your need and leaves you $30 for your friend's gift. You balanced needs and wants perfectly!",
+      correctMessage: "Good job! You balanced needs and wants perfectly! Even though a new backpack sounds fun, it is a want, not a need. Besides, you need $30 for your friend's gift.",
+      incorrectMessage: "Not quite. Think about if a new backpack is a need in your life right now."
     },
   },
   {
@@ -61,13 +66,14 @@ const scenarios: Scenario[] = [
     villagerId: 3,
     message: {
       type: 'text',
-      content: "You got a text: 'WIN FREE Nintendo Switch! Click link and enter parent's credit card.' What do you do?",
+      content: "You're getting a phone call. Pick up the phone.",
     },
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
       title: "Scam Detection",
-      message: "Excellent! You recognized a scam! Real prizes never ask for credit card info. Always tell a trusted adult about suspicious messages.",
+      correctMessage: "Excellent! You recognized a scam! Strangers that ask for personal details are not to be trusted. Always tell an adult about suspicious messages.",
+      incorrectMessage: ""
     },
   },
   {
@@ -75,13 +81,14 @@ const scenarios: Scenario[] = [
     villagerId: 4,
     message: {
       type: 'text',
-      content: "Friend asks to borrow $15. You have $40 and concert tickets go on sale in 5 days ($50). What do you do?",
+      content: "H",
     },
-    correctAnswer: 'reject',
+    correctAnswer: 'trust',
     mood: 'neutral',
     reflection: {
       title: "Lending Money",
-      message: "Good decision! It's okay to say no when lending money conflicts with your goals. True friends will understand. You're protecting your concert plans!",
+      correctMessage: "Good decision! It's good to help people in need, especially if you trust them lending money conflicts with your goals. True friends will understand. You're protecting your concert plans!",
+      incorrectMessage: ""
     },
   },
   {
@@ -89,13 +96,14 @@ const scenarios: Scenario[] = [
     villagerId: 5,
     message: {
       type: 'text',
-      content: "Everyone's buying $90 sneakers. You're saving $100 for art tablet ($120 total needed). What do you do?",
+      content: "Everyone's buying $90 sneakers. But you're saving $100 for a new art tablet. What do you do? Do you buy sneakers?",
     },
     correctAnswer: 'reject',
     mood: 'happy',
     reflection: {
       title: "Peer Pressure",
-      message: "Amazing! You stayed true to YOUR goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
+      correctMessage: "Amazing! You stayed true to your goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
+      incorrectMessage: "Peer pressure can be a really money stealer. Beware of falling for trends and focus on spending money wisely."
     },
   },
 ];
@@ -118,11 +126,11 @@ export default function App() {
   
   // Buildings positioned around the world (matching financial literacy challenges)
   const [villagers, setVillagers] = useState([
-    { id: 1, name: "Bank", variant: 'lily' as const, x: 600, y: 400, color: "#d4af37", isActive: true, buildingType: 'bank' as const },
-    { id: 2, name: "Store", variant: 'max' as const, x: 1800, y: 500, color: "#ff9966", isActive: false, buildingType: 'store' as const },
-    { id: 3, name: "Lily's House", variant: 'zoe' as const, x: 400, y: 1200, color: "#ffb3ba", isActive: false, buildingType: 'phone' as const },
-    { id: 4, name: "Max's House", variant: 'lily' as const, x: 1400, y: 1300, color: "#bae1ff", isActive: false, buildingType: 'friend' as const },
-    { id: 5, name: "School", variant: 'max' as const, x: 1200, y: 800, color: "#c9a0dc", isActive: false, buildingType: 'school' as const },
+    { id: 1, name: "Bank", variant: 'bob' as const, voice: BOB, x: 600, y: 400, color: "#d4af37", isActive: true, buildingType: 'bank' as const },
+    { id: 2, name: "Store", variant: 'sally' as const, voice: SALLY, x: 1800, y: 500, color: "#ff9966", isActive: false, buildingType: 'store' as const },
+    { id: 3, name: "Lily's House", variant: 'lily' as const, voice: LILY, x: 400, y: 1200, color: "#ffb3ba", isActive: false, buildingType: 'phone' as const },
+    { id: 4, name: "Max's House", variant: 'max' as const, voice: MAX, x: 1400, y: 1300, color: "#bae1ff", isActive: false, buildingType: 'friend' as const },
+    { id: 5, name: "School", variant: 'zoe' as const, voice: ZOE, x: 1200, y: 800, color: "#c9a0dc", isActive: false, buildingType: 'school' as const },
   ]);
   const [nearbyVillager, setNearbyVillager] = useState<number | null>(null);
   
@@ -164,6 +172,8 @@ export default function App() {
   const [showReward, setShowReward] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [feedbackEffect, setFeedbackEffect] = useState<'safe' | 'unsafe' | null>(null);
+  const [correctChoice, setCorrectChoice] = useState(false);
+
 
   // Settings state
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -290,12 +300,14 @@ export default function App() {
     checkDistance();
   }, [playerX, playerY, villagers]);
 
-  const handleVillagerClick = (villagerId: number) => {
+  const handleVillagerClick = async (villagerId: number) => {
     const villager = villagers.find((v) => v.id === villagerId);
     if (!villager || !villager.isActive) return;
 
     setActiveVillager(villagerId);
+    // await createAndSaveAudio(currentScenario.message.content, villager.voice, "character-speak");
     setShowConversation(true);
+    setCorrectChoice(false);
   };
 
   const handleChoice = (choice: 'trust' | 'question' | 'reject') => {
@@ -309,9 +321,11 @@ export default function App() {
 
     // Update trust level
     if (isCorrect) {
+      setCorrectChoice(true);
       setTrustLevel((prev) => Math.min(100, prev + 15));
     } else {
       setTrustLevel((prev) => Math.max(0, prev - 10));
+      setCorrectChoice(false);
     }
 
     // Show reflection
@@ -415,7 +429,7 @@ export default function App() {
         <ReflectionOverlay
           isOpen={showReflection}
           title={currentScenario.reflection.title}
-          message={currentScenario.reflection.message}
+          message={correctChoice ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage}
           onClose={handleReflectionClose}
         />
       )}

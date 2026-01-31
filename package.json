@@ -33,6 +33,9 @@
             "class-variance-authority": "^0.7.1",
             "clsx": "*",
             "cmdk": "^1.1.1",
+            "dotenv": "^17.2.3",
+            "dotnet": "^1.1.4",
+            "elevenlabs": "^1.59.0",
             "embla-carousel-react": "^8.6.0",
             "framer-motion": "^12.29.2",
             "input-otp": "^1.4.2",
@@ -51,6 +54,8 @@
       },
       "devDependencies": {
             "@types/node": "^20.10.0",
+            "@types/react": "^19.2.10",
+            "@types/react-dom": "^19.2.3",
             "@vitejs/plugin-react-swc": "^3.10.2",
             "vite": "6.3.5"
       },

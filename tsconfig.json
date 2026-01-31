@@ -7,6 +7,9 @@
     "moduleResolution": "Node",
     "strict": true,
     "skipLibCheck": true,
+    "allowJs": true,
+    "noEmit": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

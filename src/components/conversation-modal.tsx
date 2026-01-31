@@ -12,7 +12,7 @@ interface Message {
 interface ConversationModalProps {
   isOpen: boolean;
   villagerName: string;
-  villagerVariant: 'lily' | 'max' | 'zoe';
+  villagerVariant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
   villagerMood: 'neutral' | 'worried' | 'happy';
   message: Message;
   onTrust: () => void;
