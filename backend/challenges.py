@@ -6,15 +6,15 @@ CHALLENGES = {
         "level": 1,
         "location": "Bank",
         "topic": "Delayed Gratification",
-        "question": "You saved $50 for an $80 skateboard. Your favorite game is on sale for $30. What do you do?",
+        "question": "You saved $50 for an $80 skateboard. A game is on sale for $30. What do you do?",
         "choices": {
             "A": "Keep saving for the skateboard",
             "B": "Buy the game now"
         },
         "correct_choice": "A",
         "feedback": {
-            "correct": "Great job! Staying focused on your goal will help you get the skateboard faster. Delayed gratification pays off!",
-            "wrong": "Oops! If you spend $30 on the game, you'll only have $20 left and be further from your skateboard goal."
+            "correct": "Great job! Delayed gratification means waiting for bigger goals. That's opportunity cost in action!",
+            "wrong": "The game delays your skateboard by weeks. Opportunity cost: choosing one thing means giving up another!"
         }
     },
     2: {
@@ -58,23 +58,23 @@ CHALLENGES = {
         },
         "correct_choice": "B",
         "feedback": {
-            "correct": "Good decision! It's okay to say no when lending money conflicts with your goals. True friends will understand. You're protecting your concert plans!",
-            "wrong": "Uh oh! If you lend $15, you'll only have $25. You won't have enough for the $50 concert tickets in 5 days!"
+            "correct": "Smart! Financial boundaries protect your goals. Real friends understand when you're budgeting for something important!",
+            "wrong": "Without that $15, you can't afford concert tickets. This is why budgeting matters - planning ahead helps you reach goals!"
         }
     },
     5: {
         "level": 5,
         "location": "School",
-        "topic": "Peer Pressure",
-        "question": "Everyone's buying $90 sneakers. You're saving $100 for art tablet ($120 total needed). What do you do?",
+        "topic": "Income Allocation",
+        "question": "You earned $30 doing chores! What should you do with it?",
         "choices": {
-            "A": "Buy sneakers to fit in",
-            "B": "Stick to art tablet goal"
+            "A": "Spend all $30 on fun stuff now",
+            "B": "Save $15, spend $15 on fun"
         },
         "correct_choice": "B",
         "feedback": {
-            "correct": "Amazing! You stayed true to YOUR goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
-            "wrong": "The sneakers might look cool, but you just spent $90 of your art tablet savings. Now you're back to only $10 saved."
+            "correct": "Perfect! Balancing saving and spending is key money management. Save most, enjoy some - that's financial wisdom!",
+            "wrong": "Spending it all feels great now, but nothing's left for future goals. Smart allocation means balancing today and tomorrow!"
         }
     }
 }
