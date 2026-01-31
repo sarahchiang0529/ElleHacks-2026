@@ -4,7 +4,6 @@ import fenceVertical from "@/assets/fence3.png";
 import fenceHorizontal from "@/assets/fence.png";
 import fenceCorner from "@/assets/fence2.png";
 
-
 interface PathTile {
   x: number;
   y: number;
@@ -44,8 +43,8 @@ export function PathSystem({ paths, fences = [] }: PathSystemProps) {
             className="w-auto h-auto"
             style={{
               imageRendering: 'pixelated',
-              width: '32px',
-              height: '32px',
+              width: '48px',
+              height: '48px',
             }}
           />
         </div>
@@ -74,8 +73,8 @@ export function PathSystem({ paths, fences = [] }: PathSystemProps) {
               className="w-auto h-auto"
               style={{
                 imageRendering: 'pixelated',
-                width: '32px',
-                height: '32px',
+                width: '48px',
+                height: '48px',
               }}
             />
           </div>
@@ -90,7 +89,7 @@ export function createHorizontalPath(startX: number, startY: number, length: num
   const tiles: PathTile[] = [];
   for (let i = 0; i < length; i++) {
     tiles.push({
-      x: startX + i * 32,
+      x: startX + i * 48,
       y: startY,
       type: 'dirt',
     });
@@ -104,7 +103,7 @@ export function createVerticalPath(startX: number, startY: number, length: numbe
   for (let i = 0; i < length; i++) {
     tiles.push({
       x: startX,
-      y: startY + i * 32,
+      y: startY + i * 48,
       type: 'dirt',
     });
   }

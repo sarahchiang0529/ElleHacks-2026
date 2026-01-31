@@ -28,7 +28,7 @@ export function CharacterSprite({
   
   // Sprite configuration
   const SPRITE_SIZE = 16; // Each sprite tile is 16x16 pixels
-  const SCALE = 3; // Scale up 3x for visibility (48x48 display size)
+  const SCALE = 3.5; // Scale up 3.5x for visibility (56x56 display size)
   const FRAMES_PER_ROW = 6; // 6 animation frames per direction
   const FPS = 8; // Animation speed
   
@@ -74,7 +74,7 @@ export function CharacterSprite({
           transform: 'translateX(-50%) translateY(2px)',
         };
       case 'down':
-        // Moving toward - small shadow above
+        // Moving toward - small shadow above (same as up but at top)
         return {
           position: 'top',
           width: `${baseWidth * 0.7}px`,
