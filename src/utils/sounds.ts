@@ -6,16 +6,16 @@ class SoundManager {
     // Preload all sounds
     this.sounds.walk = new Audio('/sounds/walk.mp3');
     this.sounds.walk.loop = true;
-    this.sounds.walk.volume = 0.3;
+    this.sounds.walk.volume = 0.5;
 
     this.sounds.door = new Audio('/sounds/door.mp3');
-    this.sounds.door.volume = 0.5;
+    this.sounds.door.volume = 0.4;
 
     this.sounds.correct = new Audio('/sounds/correct.mp3');
-    this.sounds.correct.volume = 0.5;
+    this.sounds.correct.volume = 0.3;
 
     this.sounds.wrong = new Audio('/sounds/wrong.mp3');
-    this.sounds.wrong.volume = 0.5;
+    this.sounds.wrong.volume = 0.2;
   }
 
   setEnabled(enabled: boolean) {
