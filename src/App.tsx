@@ -30,7 +30,7 @@ const scenarios: Scenario[] = [
   {
     id: 1,
     villagerId: 1,
-    message: "You have $80 in your pocket. Your favorite game going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
+    message: "You have $80 in your pocket. Your favorite game is going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
@@ -330,6 +330,7 @@ export default function App() {
     // Update trust level
     if (isCorrect) {
       setTrustLevel((prev) => Math.min(100, prev + 15));
+      setCorrectChoice(true);
     } else {
       setTrustLevel((prev) => Math.max(0, prev - 10));
     }
@@ -435,7 +436,7 @@ export default function App() {
         <ReflectionOverlay
           isOpen={showReflection}
           title={currentScenario.reflection.title}
-          message={currentScenario.reflection.incorrectMessage}
+          message={correctChoice ? currentScenario.reflection.correctMessage : currentScenario.reflection.correctMessage}
           onClose={handleReflectionClose}
         />
       )}
