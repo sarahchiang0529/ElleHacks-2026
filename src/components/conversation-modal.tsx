@@ -14,7 +14,7 @@ interface ConversationModalProps {
   villagerName: string;
   villagerVariant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
   villagerMood: 'neutral' | 'worried' | 'happy';
-  message: Message;
+  message: string;
   onTrust: () => void;
   onQuestion: () => void;
   onReject: () => void;

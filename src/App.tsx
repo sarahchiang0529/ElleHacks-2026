@@ -442,7 +442,7 @@ export default function App() {
           villagerName={currentVillager.name}
           villagerVariant={currentVillager.variant}
           villagerMood={currentScenario.mood}
-          message={currentScenario.message}
+          message={currentScenario.reflection.correctMessage}
           onTrust={() => handleChoice('trust')}
           onQuestion={() => handleChoice('question')}
           onReject={() => handleChoice('reject')}
@@ -454,7 +454,7 @@ export default function App() {
         <ReflectionOverlay
           isOpen={showReflection}
           title={currentScenario.reflection.title}
-          message={currentScenario.reflection.message}
+          message={currentScenario.reflection.incorrectMessage}
           onClose={handleReflectionClose}
         />
       )}
