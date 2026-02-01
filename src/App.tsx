@@ -417,7 +417,7 @@ export default function App() {
     if (!currentScenario) return;
     
     // Hanging up the scam call is correct - award points
-    setTrustLevel((prev) => Math.min(100, prev + 15));
+    setTrustLevel((prev) => Math.min(100, prev + 20));
     soundManager.play('correct');
     
     // Show feedback effect
