@@ -20,8 +20,7 @@ interface ConversationModalProps {
   onTrust: () => void;
   onQuestion: () => void;
   onReject: () => void;
-  result?: ResultState;
-
+  effectiveResult?: ResultState;
 }
 
 export function ConversationModal({
@@ -33,7 +32,7 @@ export function ConversationModal({
   onTrust,
   onQuestion,
   onReject,
-  result,
+  effectiveResult = null,
 }: ConversationModalProps) {
   const getMoodColor = () => {
     switch (villagerMood) {
@@ -46,10 +45,12 @@ export function ConversationModal({
     }
   };
 
+  const isWrong = effectiveResult === "wrong";
+  const isCorrect = effectiveResult === "correct";
   const resultClass =
-    result === "correct"
+    effectiveResult === "correct"
       ? "ring-4 ring-green-400 shadow-[0_0_40px_rgba(34,197,94,0.35)]"
-      : result === "wrong"
+      : effectiveResult === "wrong"
       ? "ring-4 ring-red-400 shadow-[0_0_40px_rgba(239,68,68,0.35)]"
       : "";
 
@@ -68,12 +69,53 @@ export function ConversationModal({
           {/* Modal */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
+            animate={{ scale: 1, opacity: 1, y: 0, x: isWrong ? [0, -14, 14, -10, 10, -6, 6, 0] : 0,}}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
             transition={{ type: 'spring', damping: 20 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-2xl"
           >
-            <div className={`bg-white rounded-3xl shadow-2xl border-4 border-[#3a3a3a] p-8 ${resultClass}`}>
+          <motion.div
+            animate={isCorrect ? { scale: [1, 1.03, 1] } : {}}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className={`relative bg-white rounded-3xl shadow-2xl border-4 border-[#3a3a3a] p-8 ${resultClass}`}
+          >
+            {isCorrect && (
+          <motion.div
+            className="pointer-events-none absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Sparkles */}
+            <motion.div
+              className="absolute top-6 right-8 text-2xl"
+              initial={{ scale: 0, rotate: 0, opacity: 0 }}
+              animate={{ scale: [0, 1.3, 1], rotate: [0, 25, 0], opacity: [0, 1, 0] }}
+              transition={{ duration: 0.7 }}
+            >
+              ✨
+            </motion.div>
+
+            <motion.div
+              className="absolute top-10 left-10 text-xl"
+              initial={{ y: 8, opacity: 0 }}
+              animate={{ y: [8, -6, -14], opacity: [0, 1, 0] }}
+              transition={{ duration: 0.75 }}
+            >
+              ✨
+            </motion.div>
+
+            <motion.div
+              className="absolute bottom-8 right-14 text-xl"
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: [10, -4, -12], opacity: [0, 1, 0] }}
+              transition={{ duration: 0.7 }}
+            >
+              ✨
+            </motion.div>
+          </motion.div>
+        )}
+
               {/* Header with villager */}
               <div className="flex items-center gap-4 mb-6">
                 {/* Villager portrait */}
@@ -134,7 +176,7 @@ export function ConversationModal({
                   💰 SAVE SMART
                 </motion.button>
               </div>
-            </div>
+          </motion.div>
           </motion.div>
         </>
       )}
