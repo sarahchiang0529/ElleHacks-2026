@@ -165,6 +165,9 @@ export default function App() {
   const [showReward, setShowReward] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [feedbackEffect, setFeedbackEffect] = useState<'safe' | 'unsafe' | null>(null);
+  
+  // NEW: Track the result for modal animations
+  const [answerResult, setAnswerResult] = useState<"correct" | "wrong" | null>(null);
 
   // Settings state
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -307,12 +310,15 @@ export default function App() {
 
     setActiveVillager(villagerId);
     setShowConversation(true);
+    // Reset answer result when opening a new conversation
+    setAnswerResult(null);
   };
 
   const handleChoice = (choice: 'trust' | 'question' | 'reject') => {
-    setShowConversation(false);
-
     const isCorrect = choice === currentScenario.correctAnswer;
+
+    // Set the result IMMEDIATELY for modal animations
+    setAnswerResult(isCorrect ? "correct" : "wrong");
 
     // Play sound effect
     soundManager.play(isCorrect ? 'correct' : 'wrong');
@@ -328,10 +334,15 @@ export default function App() {
       setTrustLevel((prev) => Math.max(0, prev - 10));
     }
 
-    // Show reflection
+    // Close conversation modal and show reflection after animations play
     setTimeout(() => {
-      setShowReflection(true);
-    }, 700);
+      setShowConversation(false);
+      setAnswerResult(null); // Reset for next time
+      
+      setTimeout(() => {
+        setShowReflection(true);
+      }, 100);
+    }, 800); // Give time for shake/sparkle animations to complete
   };
 
   const handleReflectionClose = () => {
@@ -413,6 +424,7 @@ export default function App() {
       {/* Conversation modal */}
       {currentVillager && currentScenario && (
         <ConversationModal
+          result={answerResult}
           isOpen={showConversation}
           villagerName={currentVillager.name}
           villagerVariant={currentVillager.variant}
