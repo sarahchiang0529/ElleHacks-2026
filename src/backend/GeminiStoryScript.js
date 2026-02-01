@@ -1,9 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
 import { createAudio, saveAudio } from "./GenerateAudio.js";
-import { INTRO_PROMPT, NARRATOR_VOICE, NPC1 } from "./Constants.js";
+import { INTRO_PROMPT, NARRATOR_VOICE, MAX, NARRATOR_SPEED, MAX_SPEED } from "./Constants.js";
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY ?? import.meta.env?.GEMINI_API_KEY });
 
 export async function generateNarration() {
   const story = await generateStory(INTRO_PROMPT);
@@ -16,6 +16,22 @@ export async function generateNarration() {
     
     console.log(text);
     audioChunks.push(await createAudio(text, voice));
+  }
+  await saveAudio(audioChunks, "intro-story");
+}
+
+export async function speak() {
+  const story = await generateStory(INTRO_PROMPT);
+  const dialogue = parseDialogue(story);
+  const audioChunks = [];
+
+  for(const line of dialogue) {
+    const [character, text] = line;
+    const voice = character.toLowerCase() === "narrator" ? NARRATOR_VOICE : MAX;
+    const speed = character.toLowerCase() === "narrator" ? NARRATOR_SPEED : MAX_SPEED;
+    
+    console.log(text);
+    createAndSaveAudio(text, voice, speed);
   }
   await saveAudio(audioChunks, "intro-story");
 }
@@ -46,5 +62,3 @@ function parseDialogue(dialogueText) {
   });
   return tuples;
 }
-
-generateNarration().catch(console.error);

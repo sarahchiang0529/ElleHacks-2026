@@ -2,6 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import introAudio from "../backend/intro-story.mp3"
 
+const API_BASE = "http://localhost:3001";
+
 interface NarratorIntroProps {
   isPlaying: boolean;
   onComplete: () => void;
@@ -12,6 +14,24 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
   const [fadeOut, setFadeOut] = useState(false);
   const [showStartButton, setShowStartButton] = useState(false);
   const [audioStarted, setAudioStarted] = useState(false);
+  const [generateLoading, setGenerateLoading] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+
+  const runGenerateNarration = async () => {
+    setGenerateLoading(true);
+    setGenerateError(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/generate-narration`, { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Server error ${res.status}`);
+      }
+    } catch (e) {
+      setGenerateError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setGenerateLoading(false);
+    }
+  };
 
   const startAudio = () => {
     console.log("🎙️ Starting audio manually...");
@@ -186,6 +206,25 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
                 ))}
               </motion.div>
             )}
+          </div>
+
+          {/* Generate narration button (runs backend generateNarration) */}
+          <div className="absolute bottom-8 left-8 flex flex-col gap-2 items-start max-w-xs">
+            {generateError && (
+              <p className="text-red-200 text-sm">{generateError}</p>
+            )}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2 }}
+              onClick={runGenerateNarration}
+              disabled={generateLoading}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl border-2 border-white font-semibold text-lg shadow-xl hover:scale-105 transition-transform disabled:opacity-60 disabled:pointer-events-none"
+              whileHover={{ scale: generateLoading ? 1 : 1.05 }}
+              whileTap={{ scale: generateLoading ? 1 : 0.95 }}
+            >
+              {generateLoading ? "Generating…" : "Generate intro narration"}
+            </motion.button>
           </div>
 
           {/* Skip button in bottom right */}
