@@ -13,6 +13,7 @@ interface ConversationModalProps {
   onTrust: () => void
   onQuestion: () => void
   onReject: () => void
+  hideButtons?: boolean
 }
 
 export function ConversationModal({
@@ -24,6 +25,7 @@ export function ConversationModal({
   onTrust,
   onQuestion,
   onReject,
+  hideButtons = false,
 }: ConversationModalProps) {
   const { displayed, isTyping } = useTypewriter(
     isOpen ? message : "",
@@ -86,8 +88,8 @@ export function ConversationModal({
               </div>
             </div>
 
-            {/* Choices (ONLY after typing finishes) */}
-            {!isTyping && (
+            {/* Choices (ONLY after typing finishes and buttons are NOT hidden) */}
+            {!isTyping && !hideButtons && (
               <motion.div
                 className="dialogue-choices"
                 initial={{ opacity: 0, y: 10 }}

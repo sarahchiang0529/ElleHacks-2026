@@ -5,7 +5,7 @@ import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
 import { NarratorIntro } from "./components/NarratorIntro";
-import { MAX, LILY, SALLY, BOB, ZOE, NARRATOR_VOICE, MAX_SPEED, LILY_SPEED, SALLY_SPEED, BOB_SPEED, ZOE_SPEED, NARRATOR_SPEED } from "./backend/Constants";
+import { MAX, LILY, SALLY, BOB, ZOE, NARRATOR_VOICE } from "./backend/Constants";
 import { createAndSaveAudio } from "./backend/PlayAudio";
 import { soundManager } from "./utils/sounds";
 
@@ -55,7 +55,7 @@ const scenarios: Scenario[] = [
   {
     id: 3,
     villagerId: 3,
-    message: "Oh hey! You're getting a phone call! I think you might have to pick up the phone.",
+    message: "Oh hey! You're getting a phone call. I think you might have to pick up the phone.",
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
@@ -67,7 +67,7 @@ const scenarios: Scenario[] = [
   {
     id: 4,
     villagerId: 4,
-    message: "Wait, stop! I just got a text - it's my grandma! She's been rushed to the hospital and needs money for surgery right now! I'm begging you, can you lend me some money? I'll pay you back I promise!",
+    message: "Wait, stop! I just got a text—it's my grandma! She's been rushed to the hospital and needs money for surgery right now. Please, I'm begging you, can you lend me some money? I'll pay you back, I promise!",
     correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
@@ -108,11 +108,11 @@ export default function App() {
   
   // Buildings positioned around the world (matching financial literacy challenges)
   const [villagers, setVillagers] = useState([
-    { id: 1, name: "Bank", variant: 'bob' as const, voice: BOB, speed: BOB_SPEED, x: 600, y: 400, color: "#d4af37", isActive: true, buildingType: 'bank' as const },
-    { id: 2, name: "Store", variant: 'sally' as const, voice: SALLY, speed: SALLY_SPEED, x: 1800, y: 500, color: "#ff9966", isActive: false, buildingType: 'store' as const },
-    { id: 3, name: "Lily's House", variant: 'lily' as const, voice: LILY, speed: LILY_SPEED, x: 400, y: 1200, color: "#ffb3ba", isActive: false, buildingType: 'phone' as const },
-    { id: 4, name: "Max's House", variant: 'max' as const, voice: MAX, speed: MAX_SPEED, x: 1400, y: 1300, color: "#bae1ff", isActive: false, buildingType: 'friend' as const },
-    { id: 5, name: "School", variant: 'zoe' as const, voice: ZOE, speed: ZOE_SPEED, x: 1200, y: 800, color: "#c9a0dc", isActive: false, buildingType: 'school' as const },
+    { id: 1, name: "Bank", variant: 'bob' as const, voice: BOB, x: 600, y: 400, color: "#d4af37", isActive: true, buildingType: 'bank' as const },
+    { id: 2, name: "Store", variant: 'sally' as const, voice: SALLY, x: 1800, y: 500, color: "#ff9966", isActive: false, buildingType: 'store' as const },
+    { id: 3, name: "Lily's House", variant: 'lily' as const, voice: LILY, x: 400, y: 1200, color: "#ffb3ba", isActive: false, buildingType: 'phone' as const },
+    { id: 4, name: "Max's House", variant: 'max' as const, voice: MAX, x: 1400, y: 1300, color: "#bae1ff", isActive: false, buildingType: 'friend' as const },
+    { id: 5, name: "School", variant: 'zoe' as const, voice: ZOE, x: 1200, y: 800, color: "#c9a0dc", isActive: false, buildingType: 'school' as const },
   ]);
   const [nearbyVillager, setNearbyVillager] = useState<number | null>(null);
   
@@ -349,7 +349,7 @@ export default function App() {
     setActiveVillager(villagerId);
 
     try {
-      const audio = await createAndSaveAudio(currentScenario.message, villager.voice, villager.speed);
+      const audio = await createAndSaveAudio(currentScenario.message, villager.voice);
 
       setShowConversation(true);
       setCorrectChoice(false);
@@ -360,6 +360,7 @@ export default function App() {
           setShowConversation(false);
           setScamcallAnswered(false);
           setShowScamCall(true);
+          setCorrectChoice(true); // Hanging up is always correct for Lily
           soundManager.play("ring");
         });
       }
@@ -385,7 +386,7 @@ export default function App() {
 
     // Update trust level
     if (isCorrect) {
-      setTrustLevel((prev) => Math.min(100, prev + 20));
+      setTrustLevel((prev) => Math.min(100, prev + 15));
       setCorrectChoice(true);
     } else {
       setTrustLevel((prev) => Math.max(0, prev - 10));
@@ -405,7 +406,7 @@ export default function App() {
     const reflectionMessage = isCorrect ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage;
     setTimeout(() => {
       setShowReflection(true);
-      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE, NARRATOR_SPEED).catch((err) => console.error("Reflection audio failed", err));
+      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) => console.error("Reflection audio failed", err));
     }, 700);
   };
 
@@ -414,13 +415,23 @@ export default function App() {
     setScamcallAnswered(false);
     soundManager.stop("ring");
     if (!currentScenario) return;
-    const reflectionMessage = correctChoice
-      ? currentScenario.reflection.correctMessage
-      : currentScenario.reflection.incorrectMessage;
-    setShowReflection(true);
-    createAndSaveAudio(reflectionMessage, NARRATOR_VOICE, NARRATOR_SPEED).catch((err) =>
-      console.error("Reflection audio failed", err)
-    );
+    
+    // Hanging up the scam call is correct - award points
+    setTrustLevel((prev) => Math.min(100, prev + 15));
+    soundManager.play('correct');
+    
+    // Show feedback effect
+    setFeedbackEffect('safe');
+    setTimeout(() => setFeedbackEffect(null), 600);
+    
+    // Show reflection (always correct message since hanging up is correct)
+    const reflectionMessage = currentScenario.reflection.correctMessage;
+    setTimeout(() => {
+      setShowReflection(true);
+      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) =>
+        console.error("Reflection audio failed", err)
+      );
+    }, 700);
   };
 
   const handleEndCallRef = useRef(handleEndCall);
@@ -565,6 +576,7 @@ export default function App() {
           onTrust={() => handleChoice('trust')}
           onQuestion={() => handleChoice('question')}
           onReject={() => handleChoice('reject')}
+          hideButtons={currentScenario.villagerId === 3}
         />
       )}
 
