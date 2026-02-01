@@ -9,12 +9,19 @@ interface Message {
   duration?: number;
 }
 
+interface Choices {
+  trust: string;
+  question: string;
+  reject: string;
+}
+
 interface ConversationModalProps {
   isOpen: boolean;
   villagerName: string;
   villagerVariant: 'lily' | 'max' | 'zoe';
   villagerMood: 'neutral' | 'worried' | 'happy';
   message: Message;
+  choices?: Choices;
   onTrust: () => void;
   onQuestion: () => void;
   onReject: () => void;
@@ -26,6 +33,7 @@ export function ConversationModal({
   villagerVariant,
   villagerMood,
   message,
+  choices,
   onTrust,
   onQuestion,
   onReject,
@@ -103,7 +111,7 @@ export function ConversationModal({
                   onClick={onTrust}
                   className="flex-1 bg-[var(--color-warning)] text-[#3a3a3a] py-4 px-6 rounded-2xl border-4 border-[#3a3a3a] font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
                 >
-                  💸 SPEND NOW
+                  💸 {choices?.trust || "SPEND NOW"}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -111,7 +119,7 @@ export function ConversationModal({
                   onClick={onQuestion}
                   className="flex-1 bg-[var(--color-info)] text-[#3a3a3a] py-4 px-6 rounded-2xl border-4 border-[#3a3a3a] font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
                 >
-                  🤔 THINK FIRST
+                  🤔 {choices?.question || "THINK FIRST"}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -119,7 +127,7 @@ export function ConversationModal({
                   onClick={onReject}
                   className="flex-1 bg-[var(--color-success)] text-[#3a3a3a] py-4 px-6 rounded-2xl border-4 border-[#3a3a3a] font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
                 >
-                  💰 SAVE SMART
+                  💰 {choices?.reject || "SAVE SMART"}
                 </motion.button>
               </div>
             </div>
