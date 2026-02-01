@@ -501,27 +501,32 @@ export default function App() {
 
   return (
     <div className="relative">
-      {/* Town view */}
-      <TownView
-        playerX={playerX}
-        playerY={playerY}
-        cameraX={cameraX}
-        cameraY={cameraY}
-        isMoving={isMoving}
-        playerDirection={playerDirection}
-        villagers={villagers}
-        nearbyVillager={nearbyVillager}
-        trustLevel={trustLevel}
-        onVillagerClick={handleVillagerClick}
-        feedbackEffect={feedbackEffect}
-        decorations={decorations}
-        worldWidth={WORLD_WIDTH}
-        worldHeight={WORLD_HEIGHT}
-        trees={trees}
-      />
+      {gameUnlocked && (
+        <>
+          {/* Town view */}
+          <TownView
+            playerX={playerX}
+            playerY={playerY}
+            cameraX={cameraX}
+            cameraY={cameraY}
+            isMoving={isMoving}
+            playerDirection={playerDirection}
+            villagers={villagers}
+            nearbyVillager={nearbyVillager}
+            trustLevel={trustLevel}
+            onVillagerClick={handleVillagerClick}
+            feedbackEffect={feedbackEffect}
+            decorations={decorations}
+            worldWidth={WORLD_WIDTH}
+            worldHeight={WORLD_HEIGHT}
+            trees={trees}
+          />
 
-      {/* Settings button */}
-      <SettingsButton onClick={() => setShowSettings(true)} />
+          {/* Settings button */}
+          <SettingsButton onClick={() => setShowSettings(true)} />
+        </>
+      )}
+
 
       {/* Conversation modal */}
       {currentVillager && currentScenario && (

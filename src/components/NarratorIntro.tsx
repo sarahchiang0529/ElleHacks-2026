@@ -120,18 +120,6 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
 
           {/* Main content */}
           <div className="relative z-10 text-center px-8">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ 
-                type: "spring",
-                duration: 1,
-                delay: 0.2
-              }}
-              className="text-8xl mb-8"
-            >
-              🎙️
-            </motion.div>
             
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -170,7 +158,7 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                🎙️ Start Game
+                Start Game
               </motion.button>
             )}
 
