@@ -14,6 +14,7 @@ interface Building {
   name: string;
   variant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
   voice: string;
+  speed: number,
   x: number;
   y: number;
   color: string;
