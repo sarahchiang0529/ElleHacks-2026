@@ -73,7 +73,7 @@ const scenarios: Scenario[] = [
     reflection: {
       title: "Scam Detection",
       correctMessage: "Excellent! You recognized a scam! Strangers that ask for personal details are not to be trusted. Always tell an adult about suspicious messages.",
-      incorrectMessage: ""
+      incorrectMessage: "Beware of scam calls and never share your personal information with strangers over the phone."
     },
   },
   {
@@ -81,14 +81,14 @@ const scenarios: Scenario[] = [
     villagerId: 4,
     message: {
       type: 'text',
-      content: "H",
+      content: "Wait, stop! I just got a text—it's my grandma! She's been rushed to the hospital and needs money for surgery right now. Please, I'm begging you, can you lend me some money? I'll pay you back, I promise!",
     },
-    correctAnswer: 'trust',
+    correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
-      title: "Lending Money",
-      correctMessage: "Good decision! It's good to help people in need, especially if you trust them lending money conflicts with your goals. True friends will understand. You're protecting your concert plans!",
-      incorrectMessage: ""
+      title: "The Urgent Request",
+      correctMessage: "Excellent judgment! High-pressure 'emergencies' are a classic tactic used by scammers. By pausing, you've protected your finances. Max will understand that you need to verify the situation before acting.",
+      incorrectMessage: "Watch out! This is a common scam. Even if the message looks like it's from Max's grandma, her account could be hacked. Always verify the emergency through a direct phone call before sending money."
     },
   },
   {
