@@ -1,11 +1,11 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { NPCSprite } from "./assets/npc-sprite";
 
 interface VillagerHouseProps {
   x: number;
   y: number;
   villagerName: string;
-  villagerVariant: 'lily' | 'max' | 'zoe';
+  villagerVariant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
   isActive: boolean;
   isNearby: boolean;
   color: string;

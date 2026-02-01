@@ -1,14 +1,33 @@
-import tree1 from "figma:asset/787d76851edfac7fc523a69d4978aa53982ddd5f.png";
-import tree2 from "figma:asset/c573dbcb3b2f983cd61fc756aade503ef6b63ae9.png";
-import tree3 from "figma:asset/10150a358ddc8c928d77d85f94e60ea297706b08.png";
-import tree4 from "figma:asset/8e351449c045f77bffa2eb5e300de8deb4ae7ef5.png";
-import tree5 from "figma:asset/e25f1bcf6b6f4a4080a3cc4ce6cc25d809b7a20b.png";
-import tree6 from "figma:asset/c227c7574511348e118e944ad6b53be64834b75e.png";
-import tree7 from "figma:asset/e483947a8c5a8d4f272ee698e3d4941200dc93ea.png";
-import tree8 from "figma:asset/707e6ce9bd45b088328b693948bc068dd7b82a73.png";
-import tree9 from "figma:asset/cc15e8c344b5a3782426ecc29d31eb5c9c59744e.png";
+// Import all tree sprite sheets (each has 3 trees)
+import tree1 from "@/assets/largeTree.png";
+import tree2 from "@/assets/largeTree2.png";
+import tree3 from "@/assets/largeTree3.png";
+import tree4 from "@/assets/mediumTree.png";
+import tree5 from "@/assets/mediumTree2.png";
+import tree6 from "@/assets/mediumTree3.png";
+import tree7 from "@/assets/smallTree.png";
+import tree8 from "@/assets/smallTree2.png";
+import tree9 from "@/assets/smallTree3.png";
 
-const treeAssets = [tree1, tree2, tree3, tree4, tree5, tree6, tree7, tree8, tree9];
+interface TreeSpriteSheet {
+  image: string;
+  treeWidth: number; // Width of ONE tree in the sheet
+  treeHeight: number; // Height of ONE tree
+  treesPerRow: number; // Always 3 for these sheets
+}
+
+// Configure each sprite sheet with correct aspect ratios (trees are taller than wide)
+const treeSpriteSheets: TreeSpriteSheet[] = [
+  { image: tree1, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
+  { image: tree2, treeWidth: 64, treeHeight: 80, treesPerRow: 3 }, 
+  { image: tree3, treeWidth: 64, treeHeight: 80, treesPerRow: 3 }, 
+  { image: tree4, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
+  { image: tree5, treeWidth: 32, treeHeight: 48, treesPerRow: 3 },
+  { image: tree6, treeWidth: 32, treeHeight: 48, treesPerRow: 3 }, 
+  { image: tree7, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
+  { image: tree8, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
+  { image: tree9, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
+];
 
 interface TreeDecorationProps {
   variant: number;
@@ -16,17 +35,26 @@ interface TreeDecorationProps {
 }
 
 export function TreeDecoration({ variant, scale = 1 }: TreeDecorationProps) {
-  const treeImage = treeAssets[variant % treeAssets.length];
+  // Determine which sprite sheet and which tree within that sheet
+  const sheetIndex = Math.floor(variant / 3) % treeSpriteSheets.length;
+  const treePosition = variant % 3; // 0, 1, or 2 (left, middle, right)
+  
+  const sheet = treeSpriteSheets[sheetIndex];
+  const displayWidth = sheet.treeWidth * scale;
+  const displayHeight = sheet.treeHeight * scale;
 
   return (
-    <img
-      src={treeImage}
-      alt="Tree"
+    <div
       className="pointer-events-none"
       style={{
+        width: `${displayWidth}px`,
+        height: `${displayHeight}px`,
+        backgroundImage: `url(${sheet.image})`,
+        backgroundPosition: `-${treePosition * displayWidth}px 0px`,
+        backgroundSize: `${sheet.treesPerRow * displayWidth}px ${displayHeight}px`,
         imageRendering: 'pixelated',
-        transform: `scale(${scale})`,
         filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))',
+        overflow: 'hidden',
       }}
     />
   );

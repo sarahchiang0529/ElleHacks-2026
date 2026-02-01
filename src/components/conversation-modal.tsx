@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion"
 import { VoiceMessagePlayer } from "./voice-message-player";
 import { NPCSprite } from "./assets/npc-sprite";
 
@@ -12,7 +12,7 @@ interface Message {
 interface ConversationModalProps {
   isOpen: boolean;
   villagerName: string;
-  villagerVariant: 'lily' | 'max' | 'zoe';
+  villagerVariant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
   villagerMood: 'neutral' | 'worried' | 'happy';
   message: Message;
   onTrust: () => void;

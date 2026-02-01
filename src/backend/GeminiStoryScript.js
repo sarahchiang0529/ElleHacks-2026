@@ -12,13 +12,12 @@ export async function generateNarration() {
 
   for(const line of dialogue) {
     const [character, text] = line;
-    const voice = character.toLowerCase() === "narrator" ? NARRATOR_VOICE : NPC1;
+    const voice = character.toLowerCase() === "narrator" ? NARRATOR_VOICE : MAX;
     
     console.log(text);
     audioChunks.push(await createAudio(text, voice));
   }
   await saveAudio(audioChunks, "intro-story");
-
 }
 
 async function generateStory(prompt) {

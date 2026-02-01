@@ -4,6 +4,7 @@ import { ConversationModal } from "./components/conversation-modal";
 import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
+import { soundManager } from "./utils/sounds";
 
 interface Scenario {
   id: number;
@@ -105,6 +106,7 @@ export default function App() {
   const [playerX, setPlayerX] = useState(WORLD_WIDTH / 2);
   const [playerY, setPlayerY] = useState(WORLD_HEIGHT / 2);
   const [isMoving, setIsMoving] = useState(false);
+  const [playerDirection, setPlayerDirection] = useState<'up' | 'down' | 'left' | 'right'>('down');
   const [keysPressed, setKeysPressed] = useState<Set<string>>(new Set());
 
   // Camera state - follows the player
@@ -169,6 +171,11 @@ export default function App() {
   const [movementControl, setMovementControl] = useState<'arrows' | 'wasd'>('arrows');
   const [reducedMotion, setReducedMotion] = useState(false);
 
+  // Sync sound manager with settings
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+  }, [soundEnabled]);
+
   // Get current scenario
   const currentScenario = scenarios[currentScenarioIndex];
 
@@ -196,6 +203,7 @@ export default function App() {
       
       // Handle E key for interaction
       if (key === 'e' && nearbyVillager && !showConversation) {
+        soundManager.play('door');
         handleVillagerClick(nearbyVillager);
         return;
       }
@@ -233,7 +241,23 @@ export default function App() {
     const interval = setInterval(() => {
       if (keysPressed.size === 0) {
         setIsMoving(false);
+        soundManager.stopWalking();
         return;
+      }
+
+      // Play walking sound when moving
+      soundManager.startWalking();
+
+      // Determine direction based on keys pressed
+      // Priority: vertical first, then horizontal
+      if (keysPressed.has('arrowup') || keysPressed.has('w')) {
+        setPlayerDirection('up');
+      } else if (keysPressed.has('arrowdown') || keysPressed.has('s')) {
+        setPlayerDirection('down');
+      } else if (keysPressed.has('arrowleft') || keysPressed.has('a')) {
+        setPlayerDirection('left');
+      } else if (keysPressed.has('arrowright') || keysPressed.has('d')) {
+        setPlayerDirection('right');
       }
 
       setPlayerX((prevX) => {
@@ -289,6 +313,9 @@ export default function App() {
     setShowConversation(false);
 
     const isCorrect = choice === currentScenario.correctAnswer;
+
+    // Play sound effect
+    soundManager.play(isCorrect ? 'correct' : 'wrong');
 
     // Show feedback effect
     setFeedbackEffect(isCorrect ? 'safe' : 'unsafe');
@@ -368,6 +395,7 @@ export default function App() {
         cameraX={cameraX}
         cameraY={cameraY}
         isMoving={isMoving}
+        playerDirection={playerDirection}
         villagers={villagers}
         nearbyVillager={nearbyVillager}
         trustLevel={trustLevel}
