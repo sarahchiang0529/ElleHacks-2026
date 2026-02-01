@@ -28,7 +28,7 @@ export function CharacterSprite({
   
   // Sprite configuration
   const SPRITE_SIZE = 16; // Each sprite tile is 16x16 pixels
-  const SCALE = 3.5; // Scale up 3.5x for visibility (56x56 display size)
+  const SCALE = 5; // Scale up 5x for visibility (80x80 display size)
   const FRAMES_PER_ROW = 6; // 6 animation frames per direction
   const FPS = 8; // Animation speed
   
