@@ -11,12 +11,7 @@ import { soundManager } from "./utils/sounds";
 interface Scenario {
   id: number;
   villagerId: number;
-  message: {
-    type: 'text' | 'voice';
-    content: string;
-    callerName?: string;
-    duration?: number;
-  };
+  message: string,
   correctAnswer: 'trust' | 'question' | 'reject';
   mood: 'neutral' | 'worried' | 'happy';
   reflection: {
@@ -35,10 +30,7 @@ const scenarios: Scenario[] = [
   {
     id: 1,
     villagerId: 1,
-    message: {
-      type: 'text',
-      content: "You have $80 in your pocket. Your favorite game going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
-    },
+    message: "You have $80 in your pocket. Your favorite game going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
@@ -50,10 +42,7 @@ const scenarios: Scenario[] = [
   {
     id: 2,
     villagerId: 2,
-    message: {
-      type: 'text',
-      content: "There's a cool new backpack on sale for only $30! But you really need to save money to buy your friend's birthday gift. Do you buy the backpack?",
-    },
+    message: "There's a cool new backpack on sale for only $30! But you really need to save money to buy your friend's birthday gift. Do you buy the backpack?",
     correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
@@ -65,10 +54,7 @@ const scenarios: Scenario[] = [
   {
     id: 3,
     villagerId: 3,
-    message: {
-      type: 'text',
-      content: "You're getting a phone call. Pick up the phone.",
-    },
+    message: "You're getting a phone call. Pick up the phone.",
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
@@ -80,10 +66,7 @@ const scenarios: Scenario[] = [
   {
     id: 4,
     villagerId: 4,
-    message: {
-      type: 'text',
-      content: "Wait, stop! I just got a text—it's my grandma! She's been rushed to the hospital and needs money for surgery right now. Please, I'm begging you, can you lend me some money? I'll pay you back, I promise!",
-    },
+    message: "Wait, stop! I just got a text—it's my grandma! She's been rushed to the hospital and needs money for surgery right now. Please, I'm begging you, can you lend me some money? I'll pay you back, I promise!",
     correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
@@ -95,10 +78,7 @@ const scenarios: Scenario[] = [
   {
     id: 5,
     villagerId: 5,
-    message: {
-      type: 'text',
-      content: "Everyone's buying $90 sneakers. But you're saving $100 for a new art tablet. What do you do? Do you buy sneakers?",
-    },
+    message: "Everyone's buying $90 sneakers. But you're saving $100 for a new art tablet. What do you do? Do you buy sneakers?",
     correctAnswer: 'reject',
     mood: 'happy',
     reflection: {

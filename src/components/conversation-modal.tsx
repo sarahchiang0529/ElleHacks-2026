@@ -2,13 +2,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { VoiceMessagePlayer } from "./voice-message-player";
 import { NPCSprite } from "./assets/npc-sprite";
 
-interface Message {
-  type: 'text' | 'voice';
-  content: string;
-  callerName?: string;
-  duration?: number;
-}
-
 interface ConversationModalProps {
   isOpen: boolean;
   villagerName: string;
@@ -83,16 +76,9 @@ export function ConversationModal({
 
               {/* Message area */}
               <div className="mb-8">
-                {message.type === 'text' ? (
-                  <div className="bg-[#f0f0f0] rounded-2xl p-6 border-3 border-[#3a3a3a]">
-                    <p className="text-lg leading-relaxed">{message.content}</p>
-                  </div>
-                ) : (
-                  <VoiceMessagePlayer
-                    callerName={message.callerName || 'Unknown Caller'}
-                    duration={message.duration || 10}
-                  />
-                )}
+                <div className="bg-[#f0f0f0] rounded-2xl p-6 border-3 border-[#3a3a3a]">
+                  <p className="text-lg leading-relaxed">{message}</p>
+                </div>
               </div>
 
               {/* Action buttons - ALWAYS IN SAME ORDER */}
