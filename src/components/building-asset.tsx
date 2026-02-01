@@ -22,11 +22,11 @@ const buildingImages = {
 };
 
 const buildingLabels = {
-  bank: "🏦 Bank",
-  store: "🏪 Store",
-  phone: "📱 Lily's House",
-  friend: "👫 Max's House",
-  school: "🏫 School",
+  bank: "Bank",
+  store: "Store",
+  phone: "Lily's House",
+  friend: "Max's House",
+  school: "School",
 };
 
 export function BuildingAsset({ type, isNearby, onClick }: BuildingAssetProps) {
