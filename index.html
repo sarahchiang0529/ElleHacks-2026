@@ -5,8 +5,30 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Scam Awareness Training App</title>
+      <style>
+        #scamcall.scamcall-visible {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.4);
+          pointer-events: auto;
+        }
+        #scamcall.scamcall-visible > * {
+          pointer-events: auto;
+        }
+        @keyframes scamcall-shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+          20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
+        .scamcall-shake {
+          animation: scamcall-shake 0.4s ease-in-out infinite;
+        }
+      </style>
     </head>
-
     <body>
       <div id="root"></div>
       <script type="module" src="/src/main.tsx"></script>

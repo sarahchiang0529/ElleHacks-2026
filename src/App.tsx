@@ -60,7 +60,7 @@ const scenarios: Scenario[] = [
     reflection: {
       title: "Scam Detection",
       correctMessage: "Excellent! You recognized a scam! Strangers that ask for personal details are not to be trusted. Always tell an adult about suspicious messages.",
-      incorrectMessage: "Beware of scams. Never share your personal details with strangers over a phone call."
+      incorrectMessage: "Excellent! You recognized a scam! Strangers that ask for personal details are not to be trusted. Always tell an adult about suspicious messages."
     },
   },
   {
@@ -150,6 +150,8 @@ export default function App() {
   const [showConversation, setShowConversation] = useState(false);
   const [activeVillager, setActiveVillager] = useState<number | null>(null);
   const [showReflection, setShowReflection] = useState(false);
+  const [showScamCall, setShowScamCall] = useState(false);
+  const [scamcallAnswered, setScamcallAnswered] = useState(false);
   const [showReward, setShowReward] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [feedbackEffect, setFeedbackEffect] = useState<'safe' | 'unsafe' | null>(null);
@@ -166,6 +168,24 @@ export default function App() {
   useEffect(() => {
     soundManager.setEnabled(soundEnabled);
   }, [soundEnabled]);
+
+  // When showScamCall: unhide #scamcall, full-screen overlay; add shake only until answered (clicked)
+  useEffect(() => {
+    const el = document.getElementById("scamcall");
+    if (!el) return;
+    if (showScamCall) {
+      el.hidden = false;
+      el.classList.add("scamcall-visible");
+      if (!scamcallAnswered) el.classList.add("scamcall-shake");
+      else el.classList.remove("scamcall-shake");
+    } else {
+      el.hidden = true;
+      el.classList.remove("scamcall-visible", "scamcall-shake");
+    }
+  }, [showScamCall, scamcallAnswered]);
+
+  const scamcallAnsweredRef = useRef(false);
+  scamcallAnsweredRef.current = scamcallAnswered;
 
   // Get current scenario
   const currentScenario = scenarios[currentScenarioIndex];
@@ -303,10 +323,20 @@ export default function App() {
     setActiveVillager(villagerId);
 
     try {
-      await createAndSaveAudio(currentScenario.message, villager.voice);
-      
+      const audio = await createAndSaveAudio(currentScenario.message, villager.voice);
+
       setShowConversation(true);
       setCorrectChoice(false);
+
+      // For villagerId 3 (scam call): when message finishes, close modal and show scamcall (ring + shake)
+      if (currentScenario.villagerId === 3 && audio) {
+        audio.addEventListener("ended", () => {
+          setShowConversation(false);
+          setScamcallAnswered(false);
+          setShowScamCall(true);
+          soundManager.play("ring");
+        });
+      }
     } catch (error) {
       console.error("Audio failed", error);
     } finally {
@@ -335,6 +365,16 @@ export default function App() {
       setTrustLevel((prev) => Math.max(0, prev - 10));
     }
 
+    // For villagerId 3 (scam call): if user clicked a choice before TTS ended, show scamcall now
+    if (currentScenario.villagerId === 3) {
+      setTimeout(() => {
+        setScamcallAnswered(false);
+        setShowScamCall(true);
+        soundManager.play("ring");
+      }, 700);
+      return;
+    }
+
     // Show reflection and have narrator read the message
     const reflectionMessage = isCorrect ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage;
     setTimeout(() => {
@@ -342,6 +382,39 @@ export default function App() {
       createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) => console.error("Reflection audio failed", err));
     }, 700);
   };
+
+  const handleEndCall = () => {
+    setShowScamCall(false);
+    setScamcallAnswered(false);
+    soundManager.stop("ring");
+    if (!currentScenario) return;
+    const reflectionMessage = correctChoice
+      ? currentScenario.reflection.correctMessage
+      : currentScenario.reflection.incorrectMessage;
+    setShowReflection(true);
+    createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) =>
+      console.error("Reflection audio failed", err)
+    );
+  };
+
+  const handleEndCallRef = useRef(handleEndCall);
+  handleEndCallRef.current = handleEndCall;
+
+  // When scamcall is shown: first click stops the shake (answered), second click hides and shows Reflection
+  useEffect(() => {
+    if (!showScamCall) return;
+    const el = document.getElementById("scamcall");
+    if (!el) return;
+    const onScamcallClick = () => {
+      if (scamcallAnsweredRef.current) {
+        handleEndCallRef.current();
+      } else {
+        setScamcallAnswered(true);
+      }
+    };
+    el.addEventListener("click", onScamcallClick);
+    return () => el.removeEventListener("click", onScamcallClick);
+  }, [showScamCall]);
 
   const handleReflectionClose = () => {
     setShowReflection(false);

@@ -16,6 +16,9 @@ class SoundManager {
 
     this.sounds.wrong = new Audio('/sounds/wrong.mp3');
     this.sounds.wrong.volume = 0.2;
+
+    this.sounds.ring = new Audio('/sounds/ring.mp3');
+    this.sounds.ring.volume = 0.5;
   }
 
   setEnabled(enabled: boolean) {
