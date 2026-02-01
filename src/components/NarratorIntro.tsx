@@ -150,9 +150,9 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
             {/* Manual start button if autoplay fails */}
             {showStartButton && (
               <motion.button
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 1.5 }}
                 onClick={startAudio}
                 className="mt-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-2xl border-4 border-white font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
                 whileHover={{ scale: 1.05 }}
