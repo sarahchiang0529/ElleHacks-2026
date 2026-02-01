@@ -6,10 +6,6 @@ const elevenlabs = new ElevenLabsClient({
   apiKey: process.env.ELEVENLABS_API_KEY,
 });
 
-export async function createAndSaveAudio(audioText, voiceId, audioFileName) {
-  saveAudio(await createAudio(audioText, voiceId), audioFileName)
-}
-
 export async function createAudio(audioText, voiceId) {
   const response = await elevenlabs.textToSpeech.convert(voiceId, {
     text: audioText,

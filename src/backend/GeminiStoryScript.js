@@ -3,7 +3,7 @@ import "dotenv/config";
 import { createAudio, saveAudio } from "./GenerateAudio.js";
 import { INTRO_PROMPT, NARRATOR_VOICE, NPC1 } from "./Constants.js";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.GEMINI_API_KEY });
 
 export async function generateNarration() {
   const story = await generateStory(INTRO_PROMPT);

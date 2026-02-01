@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { TownView } from "./components/town-view";
 import { ConversationModal } from "./components/conversation-modal";
 import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
 import { MAX, LILY, SALLY, BOB, ZOE } from "./backend/Constants";
-import { createAndSaveAudio } from "./backend/GenerateAudio";
+import { createAndSaveAudio } from "./backend/PlayAudio";
 
 interface Scenario {
   id: number;
@@ -173,7 +173,8 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [feedbackEffect, setFeedbackEffect] = useState<'safe' | 'unsafe' | null>(null);
   const [correctChoice, setCorrectChoice] = useState(false);
-
+  const [isTalking, setIsTalking] = useState(false);
+  const isTalkingRef = useRef(false); // Ref for immediate lock (avoids race with setState)
 
   // Settings state
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -205,8 +206,10 @@ export default function App() {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       
-      // Handle E key for interaction
+      // Handle E key for interaction (ignore key repeat to prevent duplicate audio)
       if (key === 'e' && nearbyVillager && !showConversation) {
+        if (e.repeat) return;
+        e.preventDefault();
         handleVillagerClick(nearbyVillager);
         return;
       }
@@ -303,11 +306,23 @@ export default function App() {
   const handleVillagerClick = async (villagerId: number) => {
     const villager = villagers.find((v) => v.id === villagerId);
     if (!villager || !villager.isActive) return;
+    if (isTalkingRef.current) return; // Immediate lock - prevents echo from rapid/key-repeat calls
+    isTalkingRef.current = true;
+    setIsTalking(true);
 
     setActiveVillager(villagerId);
-    // await createAndSaveAudio(currentScenario.message.content, villager.voice, "character-speak");
-    setShowConversation(true);
-    setCorrectChoice(false);
+
+    try {
+      await createAndSaveAudio(currentScenario.message.content, villager.voice);
+      
+      setShowConversation(true);
+      setCorrectChoice(false);
+    } catch (error) {
+      console.error("Audio failed", error);
+    } finally {
+      isTalkingRef.current = false;
+      setIsTalking(false);
+    }
   };
 
   const handleChoice = (choice: 'trust' | 'question' | 'reject') => {
