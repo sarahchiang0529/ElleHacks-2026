@@ -14,7 +14,6 @@ export function TrustMeter({ value }: TrustMeterProps) {
   return (
     <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50">
       <motion.div
-        className="bg-white rounded-3xl px-6 py-4 shadow-lg border-4 border-[#3a3a3a]"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
       >
@@ -25,7 +24,7 @@ export function TrustMeter({ value }: TrustMeterProps) {
           <motion.div
             className="absolute top-0 left-0 h-full rounded-full"
             style={{ backgroundColor: getColor() }}
-            initial={{ width: '50%' }}
+            initial={{ width: '0%' }}
             animate={{ width: `${value}%` }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           />

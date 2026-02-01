@@ -103,7 +103,7 @@ export default function App() {
   const [cameraY, setCameraY] = useState(WORLD_HEIGHT / 2 - window.innerHeight / 2);
 
   // Game state
-  const [trustLevel, setTrustLevel] = useState(50);
+  const [trustLevel, setTrustLevel] = useState(0);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   
   // Buildings positioned around the world (matching financial literacy challenges)
