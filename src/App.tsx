@@ -4,6 +4,7 @@ import { ConversationModal } from "./components/conversation-modal";
 import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
+import { NarratorIntro } from "./components/NarratorIntro";
 import { MAX, LILY, SALLY, BOB, ZOE, NARRATOR_VOICE } from "./backend/Constants";
 import { createAndSaveAudio } from "./backend/PlayAudio";
 import { soundManager } from "./utils/sounds";
@@ -159,6 +160,10 @@ export default function App() {
   const [isTalking, setIsTalking] = useState(false);
   const isTalkingRef = useRef(false); // Ref for immediate lock (avoids race with setState)
 
+  // Narrator intro state - plays once on first load
+  const [narratorPlaying, setNarratorPlaying] = useState(true);
+  const [gameUnlocked, setGameUnlocked] = useState(false);
+
   // Settings state
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [movementControl, setMovementControl] = useState<'arrows' | 'wasd'>('arrows');
@@ -168,6 +173,11 @@ export default function App() {
   useEffect(() => {
     soundManager.setEnabled(soundEnabled);
   }, [soundEnabled]);
+
+  // Debug: Log narrator state changes
+  useEffect(() => {
+    console.log("📊 Narrator State:", { narratorPlaying, gameUnlocked });
+  }, [narratorPlaying, gameUnlocked]);
 
   // When showScamCall: unhide #scamcall, full-screen overlay; add shake only until answered (clicked)
   useEffect(() => {
@@ -210,6 +220,9 @@ export default function App() {
   // Keyboard movement
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Block all input while narrator is playing
+      if (!gameUnlocked) return;
+      
       const key = e.key.toLowerCase();
       
       // Handle E key for interaction (ignore key repeat to prevent duplicate audio)
@@ -230,6 +243,9 @@ export default function App() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      // Block all input while narrator is playing
+      if (!gameUnlocked) return;
+      
       const key = e.key.toLowerCase();
       setKeysPressed((prev) => {
         const newSet = new Set(prev);
@@ -251,6 +267,13 @@ export default function App() {
   useEffect(() => {
     const moveSpeed = 5;
     const interval = setInterval(() => {
+      // Don't process movement if game is locked
+      if (!gameUnlocked) {
+        setIsMoving(false);
+        soundManager.stopWalking();
+        return;
+      }
+
       if (keysPressed.size === 0) {
         setIsMoving(false);
         soundManager.stopWalking();
@@ -314,6 +337,9 @@ export default function App() {
   }, [playerX, playerY, villagers]);
 
   const handleVillagerClick = async (villagerId: number) => {
+    // Don't allow interactions while narrator is playing
+    if (!gameUnlocked) return;
+    
     const villager = villagers.find((v) => v.id === villagerId);
     if (!villager || !villager.isActive) return;
     if (isTalkingRef.current) return; // Immediate lock - prevents echo from rapid/key-repeat calls
@@ -466,6 +492,11 @@ export default function App() {
     );
   };
 
+  const handleNarratorComplete = () => {
+    setNarratorPlaying(false);
+    setGameUnlocked(true);
+  };
+
   const currentVillager = villagers.find((v) => v.id === activeVillager);
 
   return (
@@ -536,6 +567,12 @@ export default function App() {
         onMovementControlChange={setMovementControl}
         reducedMotion={reducedMotion}
         onReducedMotionToggle={() => setReducedMotion(!reducedMotion)}
+      />
+
+      {/* Narrator Intro - MUST be last to render on top */}
+      <NarratorIntro 
+        isPlaying={narratorPlaying}
+        onComplete={handleNarratorComplete}
       />
     </div>
   );
