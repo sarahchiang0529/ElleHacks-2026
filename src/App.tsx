@@ -4,6 +4,7 @@ import { ConversationModal } from "./components/conversation-modal";
 import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
+import { NarratorIntro } from "./components/NarratorIntro";
 import { soundManager } from "./utils/sounds";
 
 interface Scenario {
@@ -169,6 +170,15 @@ export default function App() {
   // NEW: Track the result for modal animations
   const [answerResult, setAnswerResult] = useState<"correct" | "wrong" | null>(null);
 
+  // Narrator intro state - plays once on first load
+  const [narratorPlaying, setNarratorPlaying] = useState(true);
+  const [gameUnlocked, setGameUnlocked] = useState(false);
+
+  // Debug: Log narrator state changes
+  useEffect(() => {
+    console.log("📊 Narrator State:", { narratorPlaying, gameUnlocked });
+  }, [narratorPlaying, gameUnlocked]);
+
   // Settings state
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [movementControl, setMovementControl] = useState<'arrows' | 'wasd'>('arrows');
@@ -202,6 +212,9 @@ export default function App() {
   // Keyboard movement
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Block all input while narrator is playing
+      if (!gameUnlocked) return;
+      
       const key = e.key.toLowerCase();
       
       // Handle E key for interaction
@@ -221,6 +234,9 @@ export default function App() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      // Block all input while narrator is playing
+      if (!gameUnlocked) return;
+      
       const key = e.key.toLowerCase();
       setKeysPressed((prev) => {
         const newSet = new Set(prev);
@@ -236,12 +252,19 @@ export default function App() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [nearbyVillager, showConversation]);
+  }, [nearbyVillager, showConversation, gameUnlocked]);
 
   // Update player position in world coordinates
   useEffect(() => {
     const moveSpeed = 5;
     const interval = setInterval(() => {
+      // Don't process movement if game is locked
+      if (!gameUnlocked) {
+        setIsMoving(false);
+        soundManager.stopWalking();
+        return;
+      }
+
       if (keysPressed.size === 0) {
         setIsMoving(false);
         soundManager.stopWalking();
@@ -279,7 +302,7 @@ export default function App() {
     }, 1000 / 60);
 
     return () => clearInterval(interval);
-  }, [keysPressed]);
+  }, [keysPressed, gameUnlocked]);
 
   // Check for nearby villagers
   useEffect(() => {
@@ -305,6 +328,9 @@ export default function App() {
   }, [playerX, playerY, villagers]);
 
   const handleVillagerClick = (villagerId: number) => {
+    // Don't allow interactions while narrator is playing
+    if (!gameUnlocked) return;
+    
     const villager = villagers.find((v) => v.id === villagerId);
     if (!villager || !villager.isActive) return;
 
@@ -395,6 +421,11 @@ export default function App() {
     );
   };
 
+  const handleNarratorComplete = () => {
+    setNarratorPlaying(false);
+    setGameUnlocked(true);
+  };
+
   const currentVillager = villagers.find((v) => v.id === activeVillager);
 
   return (
@@ -466,6 +497,12 @@ export default function App() {
         onMovementControlChange={setMovementControl}
         reducedMotion={reducedMotion}
         onReducedMotionToggle={() => setReducedMotion(!reducedMotion)}
+      />
+
+      {/* Narrator Intro - MUST be last to render on top */}
+      <NarratorIntro 
+        isPlaying={narratorPlaying}
+        onComplete={handleNarratorComplete}
       />
     </div>
   );
