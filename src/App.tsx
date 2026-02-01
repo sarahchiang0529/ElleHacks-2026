@@ -37,13 +37,14 @@ const scenarios: Scenario[] = [
     villagerId: 1,
     message: {
       type: 'text',
-      content: "You saved $50 for an $80 skateboard. Your favorite game is on sale for $30. What do you do?",
+      content: "You have $80 in your pocket. Your favorite game going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
     },
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
       title: "Delayed Gratification",
-      message: "Great job! Staying focused on your goal will help you get the skateboard faster. Delayed gratification pays off!",
+      correctMessage: "Great job! Saving your money in a bank will give you interest which gives you more money! This will help you get the skateboard faster. Delayed gratification pays off!",
+      incorrectMessage: "Hmmmm. You bought yourself a new game, but you missed out on an excellent saving deal at the bank."
     },
   },
   {
@@ -51,13 +52,14 @@ const scenarios: Scenario[] = [
     villagerId: 2,
     message: {
       type: 'text',
-      content: "Your backpack broke. Basic backpack: $20. Cool limited edition: $50. Your friend's birthday is next month (need $30 for gift). What do you buy?",
+      content: "There's a cool new backpack on sale for only $30! But you really need to save money to buy your friend's birthday gift. Do you buy the backpack?",
     },
     correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
       title: "Needs vs Wants",
-      message: "Smart choice! The basic backpack meets your need and leaves you $30 for your friend's gift. You balanced needs and wants perfectly!",
+      correctMessage: "Good job! You balanced needs and wants perfectly! Even though a new backpack sounds fun, it is a want, not a need. Besides, you need $30 for your friend's gift.",
+      incorrectMessage: "Not quite. Think about if a new backpack is a need in your life right now."
     },
   },
   {
@@ -65,14 +67,14 @@ const scenarios: Scenario[] = [
     villagerId: 3,
     message: {
       type: 'text',
-      content: "You got a text: 'WIN FREE Nintendo Switch! Click link and enter parent's credit card.' What do you do?",
+      content: "You're getting a phone call. Pick up the phone.",
     },
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
       title: "Scam Detection",
       correctMessage: "Excellent! You recognized a scam! Strangers that ask for personal details are not to be trusted. Always tell an adult about suspicious messages.",
-      incorrectMessage: "Beware of scam calls and never share your personal information with strangers over the phone."
+      incorrectMessage: "Beware of scams. Never share your personal details with strangers over a phone call."
     },
   },
   {
@@ -86,8 +88,8 @@ const scenarios: Scenario[] = [
     mood: 'neutral',
     reflection: {
       title: "The Urgent Request",
-      correctMessage: "Excellent judgment! High-pressure 'emergencies' are a classic tactic used by scammers. By pausing, you've protected your finances. Max will understand that you need to verify the situation before acting.",
-      incorrectMessage: "Watch out! This is a common scam. Even if the message looks like it's from Max's grandma, her account could be hacked. Always verify the emergency through a direct phone call before sending money."
+      correctMessage: "Excellent judgment! High-pressure emergencies are a classic tactic used by scammers. By pausing, you've protected your finances. Max will understand that you need to verify the situation before acting.",
+      incorrectMessage: "Watch out! This is a common scam, Even if the message looks like it's from Max's grandma, her account could be hacked. Always verify the emergency through a direct phone call before sending money."
     },
   },
   {
@@ -95,13 +97,14 @@ const scenarios: Scenario[] = [
     villagerId: 5,
     message: {
       type: 'text',
-      content: "Everyone's buying $90 sneakers. You're saving $100 for art tablet ($120 total needed). What do you do?",
+      content: "Everyone's buying $90 sneakers. But you're saving $100 for a new art tablet. What do you do? Do you buy sneakers?",
     },
     correctAnswer: 'reject',
     mood: 'happy',
     reflection: {
       title: "Peer Pressure",
-      message: "Amazing! You stayed true to YOUR goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
+      correctMessage: "Amazing! You stayed true to your goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
+      incorrectMessage: "Peer pressure can be a really money stealer. Beware of falling for trends and focus on spending money wisely."
     },
   },
 ];
