@@ -187,6 +187,22 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
               </motion.div>
             )}
           </div>
+
+          {/* Skip button in bottom right */}
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+            onClick={() => {
+              setFadeOut(true);
+              setTimeout(onComplete, 1500);
+            }}
+            className="absolute bottom-8 right-8 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl border-2 border-white font-semibold text-lg shadow-xl hover:scale-105 transition-transform"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Skip Intro
+          </motion.button>
         </motion.div>
       )}
     </AnimatePresence>
