@@ -261,7 +261,7 @@ export default function App() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [nearbyVillager, showConversation]);
+  }, [nearbyVillager, showConversation, gameUnlocked]);
 
   // Update player position in world coordinates
   useEffect(() => {
