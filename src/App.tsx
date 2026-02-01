@@ -4,7 +4,7 @@ import { ConversationModal } from "./components/conversation-modal";
 import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
-import { MAX, LILY, SALLY, BOB, ZOE } from "./backend/Constants";
+import { MAX, LILY, SALLY, BOB, ZOE, NARRATOR_VOICE } from "./backend/Constants";
 import { createAndSaveAudio } from "./backend/PlayAudio";
 import { soundManager } from "./utils/sounds";
 
@@ -35,7 +35,7 @@ const scenarios: Scenario[] = [
     mood: 'worried',
     reflection: {
       title: "Delayed Gratification",
-      correctMessage: "Great job! Saving your money in a bank will give you interest which gives you more money! This will help you get the skateboard faster. Delayed gratification pays off!",
+      correctMessage: "Great job! Saving your money in a bank will give you interest which gives you more money! Delayed gratification truly pays off!",
       incorrectMessage: "Hmmmm. You bought yourself a new game, but you missed out on an excellent saving deal at the bank."
     },
   },
@@ -335,9 +335,11 @@ export default function App() {
       setTrustLevel((prev) => Math.max(0, prev - 10));
     }
 
-    // Show reflection
+    // Show reflection and have narrator read the message
+    const reflectionMessage = isCorrect ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage;
     setTimeout(() => {
       setShowReflection(true);
+      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) => console.error("Reflection audio failed", err));
     }, 700);
   };
 
@@ -436,7 +438,7 @@ export default function App() {
         <ReflectionOverlay
           isOpen={showReflection}
           title={currentScenario.reflection.title}
-          message={correctChoice ? currentScenario.reflection.correctMessage : currentScenario.reflection.correctMessage}
+          message={correctChoice ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage}
           onClose={handleReflectionClose}
         />
       )}
