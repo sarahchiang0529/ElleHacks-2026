@@ -322,7 +322,7 @@ export default function App() {
     setActiveVillager(villagerId);
 
     try {
-      await createAndSaveAudio(currentScenario.message.content, villager.voice);
+      // await createAndSaveAudio(currentScenario.message.content, villager.voice);
       
       setShowConversation(true);
       setCorrectChoice(false);
