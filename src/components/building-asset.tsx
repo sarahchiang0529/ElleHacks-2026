@@ -35,8 +35,8 @@ export function BuildingAsset({ type, isNearby, onClick }: BuildingAssetProps) {
       className="relative cursor-pointer"
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
-      animate={isNearby ? { y: [0, -8, 0] } : {}}
-      transition={isNearby ? { duration: 0.6, repeat: Infinity } : {}}
+      animate={isNearby ? { y: [0, -6, 0] } : {}}
+      transition={isNearby ? { duration: 1, repeat: Infinity } : {}}
     >
       {/* Building Image - Scaled 2x larger */}
       <img
@@ -51,22 +51,28 @@ export function BuildingAsset({ type, isNearby, onClick }: BuildingAssetProps) {
       />
 
       {/* Label */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
-        <div className="bg-white/90 px-3 py-1 rounded-full border-3 border-[#3a3a3a] text-sm font-bold shadow-lg">
-          {buildingLabels[type]}
+      {!isNearby && (
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 whitespace-nowrap">
+          <div className="bg-black/70 text-white px-4 py-1.5 rounded-md text-[11px] font-semibold shadow-sm backdrop-blur-sm">
+            {buildingLabels[type]}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Interaction indicator */}
       {isNearby && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="absolute -top-12 left-1/2 -translate-x-1/2"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="bg-white/95 px-4 py-2 rounded-full border-3 border-[#3a3a3a] shadow-lg whitespace-nowrap">
-            <span className="text-sm font-bold">Press E to enter</span>
+          <div className="flex items-center gap-2 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs backdrop-blur-sm">
+            <span className="opacity-80">Press</span>
+            <span className="border border-white/40 rounded px-2 py-0.5 text-[10px] font-bold bg-black/30 leading-none">
+              E
+            </span>
+            <span className="opacity-80">to enter</span>
           </div>
         </motion.div>
       )}
