@@ -1508,18 +1508,20 @@ button {
 
 .dialogue-wrapper {
   position: fixed;
-  bottom: 24px;
-  left: 50%;
+  left: 20%;
+  bottom: 16px;
   transform: translateX(-50%);
-  width: 92%;
-  max-width: 900px;
+  width: calc(100% - 32px);
+  max-width: 960px;
+  max-height: 40vh;
+  overflow: hidden;
   background: #faf8f3;
   border: 6px solid #3b3b3b;
   border-radius: 16px;
   box-shadow: 0 8px 0 #2a2a2a;
   padding: 12px;
-  z-index: 1000;
-  font-family: "Pixel", system-ui;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 .dialogue-header {
@@ -1595,4 +1597,35 @@ button {
   padding: 6px 12px;
   cursor: pointer;
   font-family: inherit;
+}
+
+.dialogue-choices button {
+  background: #ffffff;
+  border: 4px solid #3b3b3b;
+  border-radius: 12px;
+  padding: 8px 14px;
+
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+
+  box-shadow: 0 4px 0 #2a2a2a;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    background-color 0.12s ease;
+}
+
+/* Hover = lift */
+.dialogue-choices button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #2a2a2a;
+  background-color: #f6f3ec;
+}
+
+/* Active = press */
+.dialogue-choices button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #2a2a2a;
+  background-color: #eee9df;
 }

@@ -25,7 +25,10 @@ export function ConversationModal({
   onQuestion,
   onReject,
 }: ConversationModalProps) {
-  const { displayed, isTyping } = useTypewriter(message, 30)
+  const { displayed, isTyping } = useTypewriter(
+    isOpen ? message : "",
+    50
+  )
 
   useEffect(() => {
     if (!isOpen) return
@@ -80,13 +83,6 @@ export function ConversationModal({
                   {displayed}
                   {isTyping && <span className="dialogue-cursor">▌</span>}
                 </p>
-
-                {/* Voice playback (syncs with typing) */}
-                <VoiceMessagePlayer
-                  isPlaying={isTyping}
-                  villager={villagerVariant}
-                  mood={villagerMood}
-                />
               </div>
             </div>
 
@@ -94,12 +90,36 @@ export function ConversationModal({
             {!isTyping && (
               <motion.div
                 className="dialogue-choices"
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <button onClick={onTrust}>💸 SPEND NOW</button>
-                <button onClick={onQuestion}>🤔 THINK FIRST</button>
-                <button onClick={onReject}>💰 SAVE SMART</button>
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 2 }}
+                  onClick={onTrust}
+                  className="dialogue-button danger"
+                >
+                  💸 SPEND NOW
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 2 }}
+                  onClick={onQuestion}
+                  className="dialogue-button neutral"
+                >
+                  🤔 THINK FIRST
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 2 }}
+                  onClick={onReject}
+                  className="dialogue-button safe"
+                >
+                  💰 SAVE SMART
+                </motion.button>
               </motion.div>
             )}
           </motion.div>
