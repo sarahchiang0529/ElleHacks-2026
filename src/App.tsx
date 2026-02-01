@@ -385,7 +385,7 @@ export default function App() {
 
     // Update trust level
     if (isCorrect) {
-      setTrustLevel((prev) => Math.min(100, prev + 15));
+      setTrustLevel((prev) => Math.min(100, prev + 20));
       setCorrectChoice(true);
     } else {
       setTrustLevel((prev) => Math.max(0, prev - 10));
