@@ -194,6 +194,7 @@ export default function App() {
       
       // Handle E key for interaction (ignore key repeat to prevent duplicate audio)
       if (key === 'e' && nearbyVillager && !showConversation) {
+        e.preventDefault();
         soundManager.play('door');
         handleVillagerClick(nearbyVillager);
         return;
@@ -292,7 +293,7 @@ export default function App() {
     checkDistance();
   }, [playerX, playerY, villagers]);
 
-  const handleVillagerClick = (villagerId: number) => {
+  const handleVillagerClick = async (villagerId: number) => {
     const villager = villagers.find((v) => v.id === villagerId);
     if (!villager || !villager.isActive) return;
     if (isTalkingRef.current) return; // Immediate lock - prevents echo from rapid/key-repeat calls
@@ -302,7 +303,7 @@ export default function App() {
     setActiveVillager(villagerId);
 
     try {
-      // await createAndSaveAudio(currentScenario.message.content, villager.voice);
+      await createAndSaveAudio(currentScenario.message, villager.voice);
       
       setShowConversation(true);
       setCorrectChoice(false);
@@ -422,7 +423,7 @@ export default function App() {
           villagerName={currentVillager.name}
           villagerVariant={currentVillager.variant}
           villagerMood={currentScenario.mood}
-          message={currentScenario.reflection.correctMessage}
+          message={currentScenario.message}
           onTrust={() => handleChoice('trust')}
           onQuestion={() => handleChoice('question')}
           onReject={() => handleChoice('reject')}
