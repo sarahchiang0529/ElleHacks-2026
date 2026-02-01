@@ -1,16 +1,18 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { VoiceMessagePlayer } from "./voice-message-player";
-import { NPCSprite } from "./assets/npc-sprite";
+import { AnimatePresence, motion } from "framer-motion"
+import { useEffect } from "react"
+import { useTypewriter } from "../hooks/useTypewriter"
+import { VoiceMessagePlayer } from "./voice-message-player"
+import { NPCSprite } from "./assets/npc-sprite"
 
 interface ConversationModalProps {
-  isOpen: boolean;
-  villagerName: string;
-  villagerVariant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
-  villagerMood: 'neutral' | 'worried' | 'happy';
-  message: string;
-  onTrust: () => void;
-  onQuestion: () => void;
-  onReject: () => void;
+  isOpen: boolean
+  villagerName: string
+  villagerVariant: "bob" | "sally" | "lily" | "max" | "zoe"
+  villagerMood: "neutral" | "worried" | "happy"
+  message: string
+  onTrust: () => void
+  onQuestion: () => void
+  onReject: () => void
 }
 
 export function ConversationModal({
@@ -23,95 +25,86 @@ export function ConversationModal({
   onQuestion,
   onReject,
 }: ConversationModalProps) {
-  const getMoodColor = () => {
-    switch (villagerMood) {
-      case 'worried':
-        return '#f4d09a';
-      case 'happy':
-        return '#b4e8d4';
-      default:
-        return '#a8b9e8';
-    }
-  };
+  const { displayed, isTyping } = useTypewriter(message, 30)
+
+  useEffect(() => {
+    if (!isOpen) return
+  }, [isOpen, message])
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop blur */}
+          {/* Soft background dim */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/20 z-40"
           />
 
-          {/* Modal */}
+          {/* Bottom dialogue (Animal Crossing style) */}
           <motion.div
-            initial={{ scale: 0.8, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            transition={{ type: 'spring', damping: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-2xl"
+            initial={{ y: 120, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 120, opacity: 0 }}
+            transition={{ type: "spring", damping: 22 }}
+            className="dialogue-wrapper z-50"
           >
-            <div className="bg-white rounded-3xl shadow-2xl border-4 border-[#3a3a3a] p-8">
-              {/* Header with villager */}
-              <div className="flex items-center gap-4 mb-6">
-                {/* Villager portrait */}
-                <motion.div
-                  className="rounded-2xl border-4 border-[#3a3a3a] flex items-center justify-center p-4"
-                  style={{ backgroundColor: getMoodColor() }}
-                  animate={{ rotate: [0, -2, 2, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <div className="scale-150">
-                    <NPCSprite variant={villagerVariant} mood={villagerMood} />
-                  </div>
-                </motion.div>
-                <div>
-                  <h2 className="text-2xl">{villagerName}</h2>
-                  <p className="text-sm text-[var(--color-text-light)]">Villager</p>
-                </div>
-              </div>
+            {/* Header */}
+            <div className={`dialogue-header ${villagerMood}`}>
+              <span>
+                {villagerMood === "happy"
+                  ? "😊"
+                  : villagerMood === "worried"
+                  ? "⚠️"
+                  : "💬"}
+              </span>
+              <strong>{villagerName}</strong>
+            </div>
 
-              {/* Message area */}
-              <div className="mb-8">
-                <div className="bg-[#f0f0f0] rounded-2xl p-6 border-3 border-[#3a3a3a]">
-                  <p className="text-lg leading-relaxed">{message}</p>
-                </div>
-              </div>
+            {/* Content */}
+            <div className="dialogue-content">
+              {/* Portrait */}
+              <motion.div
+                className="dialogue-portrait"
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <NPCSprite variant={villagerVariant} mood={villagerMood} />
+              </motion.div>
 
-              {/* Action buttons - ALWAYS IN SAME ORDER */}
-              <div className="flex gap-4 justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={onTrust}
-                  className="flex-1 bg-[var(--color-warning)] text-[#3a3a3a] py-4 px-6 rounded-2xl border-4 border-[#3a3a3a] font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  💸 SPEND NOW
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={onQuestion}
-                  className="flex-1 bg-[var(--color-info)] text-[#3a3a3a] py-4 px-6 rounded-2xl border-4 border-[#3a3a3a] font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  🤔 THINK FIRST
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={onReject}
-                  className="flex-1 bg-[var(--color-success)] text-[#3a3a3a] py-4 px-6 rounded-2xl border-4 border-[#3a3a3a] font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  💰 SAVE SMART
-                </motion.button>
+              {/* Text */}
+              <div className="dialogue-text-box">
+                <p>
+                  {displayed}
+                  {isTyping && <span className="dialogue-cursor">▌</span>}
+                </p>
+
+                {/* Voice playback (syncs with typing) */}
+                <VoiceMessagePlayer
+                  isPlaying={isTyping}
+                  villager={villagerVariant}
+                  mood={villagerMood}
+                />
               </div>
             </div>
+
+            {/* Choices (ONLY after typing finishes) */}
+            {!isTyping && (
+              <motion.div
+                className="dialogue-choices"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <button onClick={onTrust}>💸 SPEND NOW</button>
+                <button onClick={onQuestion}>🤔 THINK FIRST</button>
+                <button onClick={onReject}>💰 SAVE SMART</button>
+              </motion.div>
+            )}
           </motion.div>
         </>
       )}
     </AnimatePresence>
-  );
+  )
 }

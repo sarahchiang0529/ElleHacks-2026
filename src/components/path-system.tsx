@@ -1,8 +1,5 @@
 import dirtTile from "@/assets/dirt.png";
 import dirtEdge from "@/assets/dirtDeco.png";
-import fenceVertical from "@/assets/fence3.png";
-import fenceHorizontal from "@/assets/fence.png";
-import fenceCorner from "@/assets/fence2.png";
 
 interface PathTile {
   x: number;

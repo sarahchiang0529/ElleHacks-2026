@@ -1500,3 +1500,99 @@ button {
   syntax: "*";
   inherits: false
 }
+
+
+/* =========================================================
+   GAME DIALOGUE SYSTEM (Animal Crossing style)
+   ========================================================= */
+
+.dialogue-wrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 900px;
+  background: #faf8f3;
+  border: 6px solid #3b3b3b;
+  border-radius: 16px;
+  box-shadow: 0 8px 0 #2a2a2a;
+  padding: 12px;
+  z-index: 1000;
+  font-family: "Pixel", system-ui;
+}
+
+.dialogue-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.dialogue-header.neutral {
+  background: #e8e2d6;
+}
+
+.dialogue-header.happy {
+  background: #dff1df;
+}
+
+.dialogue-header.warning {
+  background: #f8d7da;
+}
+
+.dialogue-content {
+  display: flex;
+  gap: 12px;
+}
+
+.dialogue-portrait {
+  background: white;
+  border-radius: 12px;
+  padding: 6px;
+  border: 4px solid #3b3b3b;
+  flex-shrink: 0;
+}
+
+.dialogue-text-box {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  border: 4px solid #3b3b3b;
+  box-shadow: inset 0 3px 0 #e0ddd6;
+  flex: 1;
+}
+
+.dialogue-text-box p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dialogue-cursor {
+  margin-left: 2px;
+  animation: dialogue-blink 1s infinite;
+}
+
+@keyframes dialogue-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.dialogue-choices {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dialogue-choices button {
+  background: #fff;
+  border: 4px solid #3b3b3b;
+  border-radius: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
