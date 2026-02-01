@@ -18,10 +18,10 @@ interface TreeSpriteSheet {
 
 // Configure each sprite sheet with correct aspect ratios (trees are taller than wide)
 const treeSpriteSheets: TreeSpriteSheet[] = [
-  { image: tree1, treeWidth: 64, treeHeight: 80, treesPerRow: 3 }, 
+  { image: tree1, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
   { image: tree2, treeWidth: 64, treeHeight: 80, treesPerRow: 3 }, 
-  { image: tree3, treeWidth: 32, treeHeight: 48, treesPerRow: 3 }, 
-  { image: tree4, treeWidth: 32, treeHeight: 48, treesPerRow: 3 }, 
+  { image: tree3, treeWidth: 64, treeHeight: 80, treesPerRow: 3 }, 
+  { image: tree4, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
   { image: tree5, treeWidth: 32, treeHeight: 48, treesPerRow: 3 },
   { image: tree6, treeWidth: 32, treeHeight: 48, treesPerRow: 3 }, 
   { image: tree7, treeWidth: 32, treeHeight: 64, treesPerRow: 3 }, 
