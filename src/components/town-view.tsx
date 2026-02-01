@@ -184,15 +184,6 @@ export function TownView({
           ))}
       </div>
 
-      {/* Instructions */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center z-40">
-        <div className="bg-white/90 px-6 py-3 rounded-full border-3 border-[#3a3a3a] shadow-lg">
-          <span className="text-sm">
-            Use <b>Arrow Keys</b> or <b>WASD</b> • Press <b>E</b> to talk
-          </span>
-        </div>
-      </div>
-
       {/* Mini-map */}
       <div className="absolute top-24 right-8 z-40">
         <div className="bg-white/90 rounded-2xl border-4 border-[#3a3a3a] p-3 shadow-lg">
