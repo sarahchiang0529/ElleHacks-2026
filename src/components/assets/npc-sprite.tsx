@@ -1,13 +1,15 @@
 interface NPCSpriteProps {
-  variant: 'lily' | 'max' | 'zoe';
+  variant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
   mood?: 'neutral' | 'worried' | 'happy';
 }
 
 export function NPCSprite({ variant, mood = 'neutral' }: NPCSpriteProps) {
   const configs = {
-    lily: { bodyColor: '#ffb3ba', hairColor: '#ff8fa3', accessory: 'bow' },
-    max: { bodyColor: '#bae1ff', hairColor: '#8bb4d9', accessory: 'cap' },
-    zoe: { bodyColor: '#ffffba', hairColor: '#ffd700', accessory: 'flower' },
+    lily: { bodyColor: '#ffb3ba', hairColor: '#ffb3ba', accessory: 'bow' },
+    max: { bodyColor: '#ffffba', hairColor: '#bae1ff', accessory: 'cap' },
+    zoe: { bodyColor: '#ffffba', hairColor: '#c9a0dc', accessory: 'flower' },
+    bob: { bodyColor: '#ffffba', hairColor: '#d4af37', accessory: 'cap' },
+    sally: { bodyColor: '#ffffba', hairColor: '#ff9966', accessory: 'flower' },
   };
 
   const config = configs[variant];

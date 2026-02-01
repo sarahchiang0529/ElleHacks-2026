@@ -12,7 +12,8 @@ import {
 interface Building {
   id: number;
   name: string;
-  variant: "lily" | "max" | "zoe";
+  variant: 'bob' | 'sally' | 'lily' | 'max' | 'zoe';
+  voice: string;
   x: number;
   y: number;
   color: string;
