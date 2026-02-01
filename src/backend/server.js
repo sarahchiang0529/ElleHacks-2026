@@ -3,6 +3,7 @@ import cors from "cors";
 import { ElevenLabsClient } from "elevenlabs";
 import "dotenv/config";
 import { Readable } from 'stream';
+import { generateNarration } from "./GeminiStoryScript.js";
 
 const app = express();
 app.use(cors());
@@ -27,6 +28,16 @@ app.post("/api/generate-audio", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Error generating audio");
+  }
+});
+
+app.post("/api/generate-narration", async (req, res) => {
+  try {
+    await generateNarration();
+    res.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: String(error?.message || error) });
   }
 });
 
