@@ -445,12 +445,25 @@ export default function App() {
   const handleReflectionClose = () => {
     setShowReflection(false);
 
-    // Check if this was the last scenario
-    if (currentScenarioIndex >= scenarios.length - 1) {
-      // Show final reward
+    // Check if trust level reached 100%
+    if (trustLevel >= 100) {
+      // Show badge reward
       setTimeout(() => {
         setShowReward(true);
       }, 300);
+      return; // Don't move to next scenario yet
+    }
+
+    // Check if this was the last scenario
+    if (currentScenarioIndex >= scenarios.length - 1) {
+      // All scenarios complete but trust not at 100% - reset to continue playing
+      setCurrentScenarioIndex(0);
+      setVillagers((prev) =>
+        prev.map((v) => ({
+          ...v,
+          isActive: v.id === 1,
+        }))
+      );
     } else {
       // Move to next scenario
       const nextIndex = currentScenarioIndex + 1;
@@ -482,14 +495,27 @@ export default function App() {
 
   const handleRewardClose = () => {
     setShowReward(false);
-    // Reset to first scenario for demo purposes
-    setCurrentScenarioIndex(0);
-    setVillagers((prev) =>
-      prev.map((v) => ({
-        ...v,
-        isActive: v.id === 1,
-      }))
-    );
+    // Reset trust level to 0 after achieving 100%
+    setTrustLevel(0);
+    // Continue with next scenario (or loop back if at the end)
+    if (currentScenarioIndex >= scenarios.length - 1) {
+      setCurrentScenarioIndex(0);
+      setVillagers((prev) =>
+        prev.map((v) => ({
+          ...v,
+          isActive: v.id === 1,
+        }))
+      );
+    } else {
+      const nextIndex = currentScenarioIndex + 1;
+      setCurrentScenarioIndex(nextIndex);
+      setVillagers((prev) =>
+        prev.map((v) => ({
+          ...v,
+          isActive: v.id === scenarios[nextIndex].villagerId,
+        }))
+      );
+    }
   };
 
   const handleNarratorComplete = () => {
