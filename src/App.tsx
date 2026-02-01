@@ -6,6 +6,7 @@ import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
 import { MAX, LILY, SALLY, BOB, ZOE } from "./backend/Constants";
 import { createAndSaveAudio } from "./backend/PlayAudio";
+import { soundManager } from "./utils/sounds";
 
 interface Scenario {
   id: number;
@@ -36,14 +37,13 @@ const scenarios: Scenario[] = [
     villagerId: 1,
     message: {
       type: 'text',
-      content: "You have $80 in your pocket. Your favorite game going on sale next week. Do you spend the money or do you save it by depositing it at the bank?",
+      content: "You saved $50 for an $80 skateboard. Your favorite game is on sale for $30. What do you do?",
     },
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
       title: "Delayed Gratification",
-      correctMessage: "Great job! Saving your money in a bank will give you interest which gives you more money! This will help you get the skateboard faster. Delayed gratification pays off!",
-      incorrectMessage: "Hmmmm. You bought yourself a new game, but you missed out on an excellent saving deal at the bank."
+      message: "Great job! Staying focused on your goal will help you get the skateboard faster. Delayed gratification pays off!",
     },
   },
   {
@@ -51,14 +51,13 @@ const scenarios: Scenario[] = [
     villagerId: 2,
     message: {
       type: 'text',
-      content: "There's a cool new backpack on sale for only $30! But you really need to save money to buy your friend's birthday gift. Do you buy the backpack?",
+      content: "Your backpack broke. Basic backpack: $20. Cool limited edition: $50. Your friend's birthday is next month (need $30 for gift). What do you buy?",
     },
     correctAnswer: 'reject',
     mood: 'neutral',
     reflection: {
       title: "Needs vs Wants",
-      correctMessage: "Good job! You balanced needs and wants perfectly! Even though a new backpack sounds fun, it is a want, not a need. Besides, you need $30 for your friend's gift.",
-      incorrectMessage: "Not quite. Think about if a new backpack is a need in your life right now."
+      message: "Smart choice! The basic backpack meets your need and leaves you $30 for your friend's gift. You balanced needs and wants perfectly!",
     },
   },
   {
@@ -66,7 +65,7 @@ const scenarios: Scenario[] = [
     villagerId: 3,
     message: {
       type: 'text',
-      content: "You're getting a phone call. Pick up the phone.",
+      content: "You got a text: 'WIN FREE Nintendo Switch! Click link and enter parent's credit card.' What do you do?",
     },
     correctAnswer: 'reject',
     mood: 'worried',
@@ -96,14 +95,13 @@ const scenarios: Scenario[] = [
     villagerId: 5,
     message: {
       type: 'text',
-      content: "Everyone's buying $90 sneakers. But you're saving $100 for a new art tablet. What do you do? Do you buy sneakers?",
+      content: "Everyone's buying $90 sneakers. You're saving $100 for art tablet ($120 total needed). What do you do?",
     },
     correctAnswer: 'reject',
     mood: 'happy',
     reflection: {
       title: "Peer Pressure",
-      correctMessage: "Amazing! You stayed true to your goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
-      incorrectMessage: "Peer pressure can be a really money stealer. Beware of falling for trends and focus on spending money wisely."
+      message: "Amazing! You stayed true to YOUR goals despite peer pressure. The art tablet will help you create for years. That's real financial wisdom!",
     },
   },
 ];
@@ -181,6 +179,11 @@ export default function App() {
   const [movementControl, setMovementControl] = useState<'arrows' | 'wasd'>('arrows');
   const [reducedMotion, setReducedMotion] = useState(false);
 
+  // Sync sound manager with settings
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+  }, [soundEnabled]);
+
   // Get current scenario
   const currentScenario = scenarios[currentScenarioIndex];
 
@@ -208,8 +211,7 @@ export default function App() {
       
       // Handle E key for interaction (ignore key repeat to prevent duplicate audio)
       if (key === 'e' && nearbyVillager && !showConversation) {
-        if (e.repeat) return;
-        e.preventDefault();
+        soundManager.play('door');
         handleVillagerClick(nearbyVillager);
         return;
       }
@@ -247,8 +249,12 @@ export default function App() {
     const interval = setInterval(() => {
       if (keysPressed.size === 0) {
         setIsMoving(false);
+        soundManager.stopWalking();
         return;
       }
+
+      // Play walking sound when moving
+      soundManager.startWalking();
 
       // Determine direction based on keys pressed
       // Priority: vertical first, then horizontal
@@ -303,7 +309,7 @@ export default function App() {
     checkDistance();
   }, [playerX, playerY, villagers]);
 
-  const handleVillagerClick = async (villagerId: number) => {
+  const handleVillagerClick = (villagerId: number) => {
     const villager = villagers.find((v) => v.id === villagerId);
     if (!villager || !villager.isActive) return;
     if (isTalkingRef.current) return; // Immediate lock - prevents echo from rapid/key-repeat calls
@@ -330,17 +336,18 @@ export default function App() {
 
     const isCorrect = choice === currentScenario.correctAnswer;
 
+    // Play sound effect
+    soundManager.play(isCorrect ? 'correct' : 'wrong');
+
     // Show feedback effect
     setFeedbackEffect(isCorrect ? 'safe' : 'unsafe');
     setTimeout(() => setFeedbackEffect(null), 600);
 
     // Update trust level
     if (isCorrect) {
-      setCorrectChoice(true);
       setTrustLevel((prev) => Math.min(100, prev + 15));
     } else {
       setTrustLevel((prev) => Math.max(0, prev - 10));
-      setCorrectChoice(false);
     }
 
     // Show reflection
@@ -444,7 +451,7 @@ export default function App() {
         <ReflectionOverlay
           isOpen={showReflection}
           title={currentScenario.reflection.title}
-          message={correctChoice ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage}
+          message={currentScenario.reflection.message}
           onClose={handleReflectionClose}
         />
       )}
