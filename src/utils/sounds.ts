@@ -1,6 +1,8 @@
 class SoundManager {
   private sounds: { [key: string]: HTMLAudioElement } = {};
   private enabled: boolean = true;
+  private backgroundMusicNormalVolume: number = 0.5;
+  private backgroundMusicDuckedVolume: number = 0.2; // Lower volume when voices are playing
 
   constructor() {
     // Preload all sounds
@@ -19,6 +21,11 @@ class SoundManager {
 
     this.sounds.ring = new Audio('/sounds/ring.mp3');
     this.sounds.ring.volume = 0.5;
+
+    // Background music
+    this.sounds.backgroundMusic = new Audio('/sounds/backgroundMusic.mp3');
+    this.sounds.backgroundMusic.loop = true;
+    this.sounds.backgroundMusic.volume = this.backgroundMusicNormalVolume;
   }
 
   setEnabled(enabled: boolean) {
@@ -50,17 +57,26 @@ class SoundManager {
 
   startWalking() {
     if (!this.enabled) return;
-    if (this.sounds.walk && this.sounds.walk.paused) {
-      this.sounds.walk.play().catch(() => {
-        // Ignore autoplay errors
-      });
+    const walkSound = this.sounds.walk;
+    if (walkSound) {
+      // Only play if it's not already playing
+      if (walkSound.paused) {
+        walkSound.play().catch(() => {
+          // Ignore autoplay errors
+        });
+      }
     }
   }
 
   stopWalking() {
-    if (this.sounds.walk) {
-      this.sounds.walk.pause();
-      this.sounds.walk.currentTime = 0;
+    const walkSound = this.sounds.walk;
+    if (walkSound) {
+      walkSound.pause();
+      walkSound.currentTime = 0;
+      // Ensure it's stopped
+      if (!walkSound.paused) {
+        walkSound.pause();
+      }
     }
   }
 
@@ -69,6 +85,35 @@ class SoundManager {
       sound.pause();
       sound.currentTime = 0;
     });
+  }
+
+  startBackgroundMusic() {
+    if (!this.enabled) return;
+    const music = this.sounds.backgroundMusic;
+    if (music && music.paused) {
+      music.play().catch(() => {
+        // Ignore autoplay errors
+      });
+    }
+  }
+
+  stopBackgroundMusic() {
+    if (this.sounds.backgroundMusic) {
+      this.sounds.backgroundMusic.pause();
+      this.sounds.backgroundMusic.currentTime = 0;
+    }
+  }
+
+  duckBackgroundMusic() {
+    if (this.sounds.backgroundMusic) {
+      this.sounds.backgroundMusic.volume = this.backgroundMusicDuckedVolume;
+    }
+  }
+
+  restoreBackgroundMusic() {
+    if (this.sounds.backgroundMusic) {
+      this.sounds.backgroundMusic.volume = this.backgroundMusicNormalVolume;
+    }
   }
 }
 

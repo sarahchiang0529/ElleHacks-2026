@@ -157,11 +157,11 @@ export function TownView({
         {/* Player */}
         <div
           className="absolute"
-          style={{ left: playerX - 40, top: playerY - 40, zIndex: 10 }}
+          style={{ left: playerX - 30, top: playerY - 30, zIndex: 10 }}
         >
           <PlayerAvatar
-            x={40}
-            y={40}
+            x={30}
+            y={30}
             isMoving={isMoving}
             direction={playerDirection}
           />

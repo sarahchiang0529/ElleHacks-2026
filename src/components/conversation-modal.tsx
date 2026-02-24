@@ -40,12 +40,20 @@ export function ConversationModal({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Soft background dim */}
+          {/* Dark background overlay - covers entire screen */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 z-40"
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              zIndex: 40,
+            }}
           />
 
           {/* Bottom dialogue (Animal Crossing style) */}

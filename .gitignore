@@ -1,1 +1,10 @@
-node_modules
+# dependencies
+node_modules/
+
+# env files (root)
+.env
+.env.*
+
+# backend env
+src/backend/.env
+src/backend/.env.*

@@ -5,7 +5,7 @@ import { ReflectionOverlay } from "./components/reflection-overlay";
 import { RewardScreen } from "./components/reward-screen";
 import { SettingsModal, SettingsButton } from "./components/settings-modal";
 import { NarratorIntro } from "./components/NarratorIntro";
-import { MAX, LILY, SALLY, BOB, ZOE, NARRATOR_VOICE } from "./backend/Constants";
+import { MAX, LILY, SALLY, BOB, ZOE, NARRATOR_VOICE, MAX_SPEED, LILY_SPEED, SALLY_SPEED, BOB_SPEED, ZOE_SPEED, NARRATOR_SPEED} from "./backend/Constants";
 import { createAndSaveAudio } from "./backend/PlayAudio";
 import { soundManager } from "./utils/sounds";
 
@@ -55,7 +55,7 @@ const scenarios: Scenario[] = [
   {
     id: 3,
     villagerId: 3,
-    message: "Oh hey! You're getting a phone call. I think you might have to pick up the phone.",
+    message: "You're getting a phone call. Pick up the phone.",
     correctAnswer: 'reject',
     mood: 'worried',
     reflection: {
@@ -108,11 +108,11 @@ export default function App() {
   
   // Buildings positioned around the world (matching financial literacy challenges)
   const [villagers, setVillagers] = useState([
-    { id: 1, name: "Bank", variant: 'bob' as const, voice: BOB, x: 600, y: 400, color: "#d4af37", isActive: true, buildingType: 'bank' as const },
-    { id: 2, name: "Store", variant: 'sally' as const, voice: SALLY, x: 1800, y: 500, color: "#ff9966", isActive: false, buildingType: 'store' as const },
-    { id: 3, name: "Lily's House", variant: 'lily' as const, voice: LILY, x: 400, y: 1200, color: "#ffb3ba", isActive: false, buildingType: 'phone' as const },
-    { id: 4, name: "Max's House", variant: 'max' as const, voice: MAX, x: 1400, y: 1300, color: "#bae1ff", isActive: false, buildingType: 'friend' as const },
-    { id: 5, name: "School", variant: 'zoe' as const, voice: ZOE, x: 1200, y: 800, color: "#c9a0dc", isActive: false, buildingType: 'school' as const },
+    { id: 1, name: "Bank", variant: 'bob' as const, voice: BOB, speed: BOB_SPEED, x: 600, y: 400, color: "#d4af37", isActive: true, buildingType: 'bank' as const },
+    { id: 2, name: "Store", variant: 'sally' as const, voice: SALLY, speed: SALLY_SPEED, x: 1800, y: 500, color: "#ff9966", isActive: false, buildingType: 'store' as const },
+    { id: 3, name: "Lily's House", variant: 'lily' as const, voice: LILY, speed: LILY_SPEED, x: 400, y: 1200, color: "#ffb3ba", isActive: false, buildingType: 'phone' as const },
+    { id: 4, name: "Max's House", variant: 'max' as const, voice: MAX, speed: MAX_SPEED, x: 1400, y: 1300, color: "#bae1ff", isActive: false, buildingType: 'friend' as const },
+    { id: 5, name: "School", variant: 'zoe' as const, voice: ZOE, speed: ZOE_SPEED, x: 1200, y: 800, color: "#c9a0dc", isActive: false, buildingType: 'school' as const },
   ]);
   const [nearbyVillager, setNearbyVillager] = useState<number | null>(null);
   
@@ -173,6 +173,15 @@ export default function App() {
   useEffect(() => {
     soundManager.setEnabled(soundEnabled);
   }, [soundEnabled]);
+
+  // Start background music when game unlocks
+  useEffect(() => {
+    if (gameUnlocked && soundEnabled) {
+      soundManager.startBackgroundMusic();
+    } else if (!gameUnlocked) {
+      soundManager.stopBackgroundMusic();
+    }
+  }, [gameUnlocked, soundEnabled]);
 
   // Debug: Log narrator state changes
   useEffect(() => {
@@ -349,23 +358,33 @@ export default function App() {
     setActiveVillager(villagerId);
 
     try {
-      const audio = await createAndSaveAudio(currentScenario.message, villager.voice);
+      const audio = await createAndSaveAudio(currentScenario.message, villager.voice, villager.speed);
 
       setShowConversation(true);
       setCorrectChoice(false);
 
-      // For villagerId 3 (scam call): when message finishes, close modal and show scamcall (ring + shake)
+      // Duck background music when voice starts playing
+      if (audio) {
+        soundManager.duckBackgroundMusic();
+        audio.addEventListener("play", () => {
+          soundManager.duckBackgroundMusic();
+        });
+        audio.addEventListener("ended", () => {
+          soundManager.restoreBackgroundMusic();
+        });
+      }
+
+      // For villagerId 3 (scam call): when message finishes, show phone call
       if (currentScenario.villagerId === 3 && audio) {
         audio.addEventListener("ended", () => {
-          setShowConversation(false);
           setScamcallAnswered(false);
           setShowScamCall(true);
-          setCorrectChoice(true); // Hanging up is always correct for Lily
           soundManager.play("ring");
         });
       }
     } catch (error) {
       console.error("Audio failed", error);
+      soundManager.restoreBackgroundMusic();
     } finally {
       isTalkingRef.current = false;
       setIsTalking(false);
@@ -386,7 +405,7 @@ export default function App() {
 
     // Update trust level
     if (isCorrect) {
-      setTrustLevel((prev) => Math.min(100, prev + 15));
+      setTrustLevel((prev) => Math.min(100, prev + 20));
       setCorrectChoice(true);
     } else {
       setTrustLevel((prev) => Math.max(0, prev - 10));
@@ -406,31 +425,61 @@ export default function App() {
     const reflectionMessage = isCorrect ? currentScenario.reflection.correctMessage : currentScenario.reflection.incorrectMessage;
     setTimeout(() => {
       setShowReflection(true);
-      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) => console.error("Reflection audio failed", err));
+      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE, NARRATOR_SPEED)
+        .then((audio) => {
+          if (audio) {
+            soundManager.duckBackgroundMusic();
+            audio.addEventListener("play", () => {
+              soundManager.duckBackgroundMusic();
+            });
+            audio.addEventListener("ended", () => {
+              soundManager.restoreBackgroundMusic();
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Reflection audio failed", err);
+          soundManager.restoreBackgroundMusic();
+        });
     }, 700);
   };
 
   const handleEndCall = () => {
     setShowScamCall(false);
+    setShowConversation(false); // Close the conversation modal
     setScamcallAnswered(false);
     soundManager.stop("ring");
     if (!currentScenario) return;
     
-    // Hanging up the scam call is correct - award points
+    // Hanging up is correct - award trust points
     setTrustLevel((prev) => Math.min(100, prev + 20));
+    setCorrectChoice(true);
     soundManager.play('correct');
     
     // Show feedback effect
     setFeedbackEffect('safe');
     setTimeout(() => setFeedbackEffect(null), 600);
     
-    // Show reflection (always correct message since hanging up is correct)
+    // Show reflection with correct message (always correct for hanging up)
     const reflectionMessage = currentScenario.reflection.correctMessage;
     setTimeout(() => {
       setShowReflection(true);
-      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE).catch((err) =>
-        console.error("Reflection audio failed", err)
-      );
+      createAndSaveAudio(reflectionMessage, NARRATOR_VOICE, NARRATOR_SPEED)
+        .then((audio) => {
+          if (audio) {
+            soundManager.duckBackgroundMusic();
+            audio.addEventListener("play", () => {
+              soundManager.duckBackgroundMusic();
+            });
+            audio.addEventListener("ended", () => {
+              soundManager.restoreBackgroundMusic();
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Reflection audio failed", err);
+          soundManager.restoreBackgroundMusic();
+        });
     }, 700);
   };
 
@@ -456,25 +505,12 @@ export default function App() {
   const handleReflectionClose = () => {
     setShowReflection(false);
 
-    // Check if trust level reached 100%
-    if (trustLevel >= 100) {
-      // Show badge reward
+    // Check if this was the last scenario
+    if (currentScenarioIndex >= scenarios.length - 1) {
+      // Show final reward
       setTimeout(() => {
         setShowReward(true);
       }, 300);
-      return; // Don't move to next scenario yet
-    }
-
-    // Check if this was the last scenario
-    if (currentScenarioIndex >= scenarios.length - 1) {
-      // All scenarios complete but trust not at 100% - reset to continue playing
-      setCurrentScenarioIndex(0);
-      setVillagers((prev) =>
-        prev.map((v) => ({
-          ...v,
-          isActive: v.id === 1,
-        }))
-      );
     } else {
       // Move to next scenario
       const nextIndex = currentScenarioIndex + 1;
@@ -506,27 +542,14 @@ export default function App() {
 
   const handleRewardClose = () => {
     setShowReward(false);
-    // Reset trust level to 0 after achieving 100%
-    setTrustLevel(0);
-    // Continue with next scenario (or loop back if at the end)
-    if (currentScenarioIndex >= scenarios.length - 1) {
-      setCurrentScenarioIndex(0);
-      setVillagers((prev) =>
-        prev.map((v) => ({
-          ...v,
-          isActive: v.id === 1,
-        }))
-      );
-    } else {
-      const nextIndex = currentScenarioIndex + 1;
-      setCurrentScenarioIndex(nextIndex);
-      setVillagers((prev) =>
-        prev.map((v) => ({
-          ...v,
-          isActive: v.id === scenarios[nextIndex].villagerId,
-        }))
-      );
-    }
+    // Reset to first scenario for demo purposes
+    setCurrentScenarioIndex(0);
+    setVillagers((prev) =>
+      prev.map((v) => ({
+        ...v,
+        isActive: v.id === 1,
+      }))
+    );
   };
 
   const handleNarratorComplete = () => {

@@ -12,7 +12,7 @@ interface NarratorIntroProps {
 export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
   const [audio] = useState(() => new Audio(introAudio));
   const [fadeOut, setFadeOut] = useState(false);
-  const [showStartButton, setShowStartButton] = useState(false);
+  const [showStartButton, setShowStartButton] = useState(true); // Always show initially
   const [audioStarted, setAudioStarted] = useState(false);
   const [generateLoading, setGenerateLoading] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
@@ -57,22 +57,6 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
     if (!isPlaying) return;
 
     console.log("🎙️ Narrator intro starting...");
-
-    // Try autoplay first
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          console.log("✅ Audio autoplaying successfully");
-          setAudioStarted(true);
-        })
-        .catch((error) => {
-          console.warn("⚠️ Auto-play was prevented:", error);
-          // Show manual start button
-          setShowStartButton(true);
-        });
-    }
 
     // When audio ends, trigger fade out
     const handleEnded = () => {
@@ -158,7 +142,7 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
-              className="text-xl text-white"
+              className="text-xl text-white mb-8"
               style={{
                 textShadow: '0 0 20px rgba(255,255,255,0.6)',
                 color: '#ffffff'
@@ -167,7 +151,7 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
               Listen carefully, young guardian
             </motion.p>
 
-            {/* Manual start button if autoplay fails */}
+            {/* Manual start button - always show until clicked */}
             {showStartButton && (
               <motion.button
                 initial={{ opacity: 0, y: 0 }}
@@ -188,7 +172,7 @@ export function NarratorIntro({ isPlaying, onComplete }: NarratorIntroProps) {
                 className="mt-12 flex justify-center gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.2 }}
+                transition={{ delay: 0.3 }}
               >
                 {[0, 1, 2, 3, 4].map((i) => (
                   <motion.div
